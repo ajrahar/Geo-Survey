@@ -8,6 +8,7 @@ import 'package:geosurvey/core/utils/geo_calculator.dart';
 import 'package:geosurvey/core/utils/geojson_exporter.dart';
 import 'package:geosurvey/core/utils/file_exporter.dart';
 import 'package:geosurvey/core/utils/pdf_exporter.dart';
+import 'package:geosurvey/core/utils/geocoding_service.dart';
 import 'package:geosurvey/core/widgets/top_notification.dart';
 import 'package:geosurvey/features/map/presentation/providers/database_providers.dart';
 import 'package:intl/intl.dart';
@@ -26,11 +27,30 @@ class SurveyDetailPage extends ConsumerStatefulWidget {
 class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
   final MapController _mapController = MapController();
   final ScreenshotController _screenshotController = ScreenshotController();
+  String? _fetchedAddress;
+  bool _isLoadingAddress = false;
 
   @override
   void dispose() {
     _mapController.dispose();
     super.dispose();
+  }
+
+  Future<void> _fetchAddress(List<LatLng> vertices) async {
+    if (_fetchedAddress != null || _isLoadingAddress) return;
+
+    setState(() {
+      _isLoadingAddress = true;
+    });
+
+    final address = await GeocodingService.getAddressFromPolygon(vertices);
+
+    if (mounted) {
+      setState(() {
+        _fetchedAddress = address;
+        _isLoadingAddress = false;
+      });
+    }
   }
 
   @override
@@ -78,59 +98,100 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                 flex: 2,
                 child: Screenshot(
                   controller: _screenshotController,
-                  child: FlutterMap(
-                    mapController: _mapController,
-                    options: MapOptions(
-                      initialCenter: center,
-                      initialZoom: 15,
-                      interactionOptions: const InteractionOptions(
-                        flags: InteractiveFlag.all,
-                      ),
-                    ),
+                  child: Stack(
                     children: [
-                      TileLayer(
-                        urlTemplate: MapConstants.osmTileUrl,
-                        userAgentPackageName: 'com.example.geosurvey',
+                      FlutterMap(
+                        mapController: _mapController,
+                        options: MapOptions(
+                          initialCenter: center,
+                          initialZoom: 15,
+                          interactionOptions: const InteractionOptions(
+                            flags: InteractiveFlag.all,
+                          ),
+                        ),
+                        children: [
+                          TileLayer(
+                            urlTemplate: MapConstants.osmTileUrl,
+                            userAgentPackageName: 'com.example.geosurvey',
+                          ),
+                          if (vertices.length >= 2)
+                            PolygonLayer(
+                              polygons: [
+                                Polygon(
+                                  points: vertices,
+                                  color: AppColors.polygonFill,
+                                  borderColor: AppColors.polygonStroke,
+                                  borderStrokeWidth: 3,
+                                ),
+                              ],
+                            ),
+                          MarkerLayer(
+                            markers: vertices.asMap().entries.map((entry) {
+                              return Marker(
+                                point: entry.value,
+                                width: 40,
+                                height: 40,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: AppColors.markerColor,
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: Colors.white,
+                                      width: 2,
+                                    ),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      '${entry.key + 1}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ),
-                      if (vertices.length >= 2)
-                        PolygonLayer(
-                          polygons: [
-                            Polygon(
-                              points: vertices,
-                              color: AppColors.polygonFill,
-                              borderColor: AppColors.polygonStroke,
-                              borderStrokeWidth: 3,
+
+                      // Zoom Controls
+                      Positioned(
+                        right: 16,
+                        bottom: 16,
+                        child: Column(
+                          children: [
+                            FloatingActionButton.small(
+                              heroTag: 'detail_zoom_in',
+                              onPressed: () {
+                                final currentZoom = _mapController.camera.zoom;
+                                _mapController.move(
+                                  _mapController.camera.center,
+                                  currentZoom + 1,
+                                );
+                              },
+                              backgroundColor: AppColors.surface,
+                              foregroundColor: AppColors.primary,
+                              child: const Icon(Icons.add),
+                            ),
+                            const SizedBox(height: 8),
+                            FloatingActionButton.small(
+                              heroTag: 'detail_zoom_out',
+                              onPressed: () {
+                                final currentZoom = _mapController.camera.zoom;
+                                _mapController.move(
+                                  _mapController.camera.center,
+                                  currentZoom - 1,
+                                );
+                              },
+                              backgroundColor: AppColors.surface,
+                              foregroundColor: AppColors.primary,
+                              child: const Icon(Icons.remove),
                             ),
                           ],
                         ),
-                      MarkerLayer(
-                        markers: vertices.asMap().entries.map((entry) {
-                          return Marker(
-                            point: entry.value,
-                            width: 40,
-                            height: 40,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.markerColor,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2,
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '${entry.key + 1}',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
                       ),
                     ],
                   ),
@@ -178,6 +239,76 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                         ),
                         const SizedBox(height: 12),
 
+                        // Address (from database or geocoding)
+                        if (survey.address.isNotEmpty)
+                          _DetailRow(
+                            icon: Icons.location_city,
+                            label: 'Alamat',
+                            value: survey.address,
+                          )
+                        else if (_fetchedAddress != null)
+                          _DetailRow(
+                            icon: Icons.location_city,
+                            label: 'Alamat (dari koordinat)',
+                            value: _fetchedAddress!,
+                          )
+                        else if (_isLoadingAddress)
+                          Row(
+                            children: [
+                              const Icon(
+                                Icons.location_city,
+                                size: 20,
+                                color: Colors.grey,
+                              ),
+                              const SizedBox(width: 12),
+                              const Expanded(
+                                child: Text(
+                                  'Mengambil alamat...',
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            ],
+                          )
+                        else
+                          GestureDetector(
+                            onTap: () => _fetchAddress(vertices),
+                            child: Row(
+                              children: [
+                                const Icon(
+                                  Icons.location_city,
+                                  size: 20,
+                                  color: Colors.blue,
+                                ),
+                                const SizedBox(width: 12),
+                                const Expanded(
+                                  child: Text(
+                                    'Tap untuk ambil alamat dari koordinat',
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ),
+                                const Icon(
+                                  Icons.refresh,
+                                  size: 16,
+                                  color: Colors.blue,
+                                ),
+                              ],
+                            ),
+                          ),
+                        const SizedBox(height: 12),
+
                         _DetailRow(
                           icon: Icons.crop_square,
                           label: 'Luas Area',
@@ -192,6 +323,111 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                           value: GeoCalculator.formatDistance(survey.perimeter),
                           valueColor: AppColors.primary,
                         ),
+                        const SizedBox(height: 12),
+
+                        const Divider(height: 32),
+
+                        // Coordinates section
+                        Text(
+                          'Koordinat Titik',
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 12),
+                        ...vertices.asMap().entries.map((entry) {
+                          final index = entry.key;
+                          final vertex = entry.value;
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: Colors.grey.shade300),
+                            ),
+                            child: Row(
+                              children: [
+                                // Point number
+                                Container(
+                                  width: 32,
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      '${index + 1}',
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                // Coordinates
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.my_location,
+                                            size: 14,
+                                            color: Colors.grey,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          const Text(
+                                            'Lat: ',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          Text(
+                                            vertex.latitude.toStringAsFixed(6),
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          const Icon(
+                                            Icons.place,
+                                            size: 14,
+                                            color: Colors.grey,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          const Text(
+                                            'Lng: ',
+                                            style: TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.grey,
+                                            ),
+                                          ),
+                                          Text(
+                                            vertex.longitude.toStringAsFixed(6),
+                                            style: const TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
                       ],
                     ),
                   ),

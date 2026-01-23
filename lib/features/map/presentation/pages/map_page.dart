@@ -93,7 +93,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               drawingState.mode != DrawingMode.complete)
             Positioned(
               right: 16,
-              bottom: 100,
+              bottom: 120,
               child: Column(
                 children: [
                   FloatingActionButton.small(
