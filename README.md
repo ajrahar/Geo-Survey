@@ -1,303 +1,175 @@
 # 🗺️ Geo Survey
 
-**Professional Land Surveying Application** - A powerful Flutter-based mobile application for land surveying, geospatial measurements, and survey data management.
+**Professional Land Surveying Application** - A powerful Flutter-based mobile application for land surveying, geospatial measurements, and survey data management. Now with **Offline Maps** and **Professional PDF Reports**.
 
-![Flutter](https://img.shields.io/badge/Flutter-3.0+-blue.svg)
-![Dart](https://img.shields.io/badge/Dart-3.0+-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Flutter](https://img.shields.io/badge/Flutter-3.0+-blue.svg?style=for-the-badge&logo=flutter)
+![Dart](https://img.shields.io/badge/Dart-3.0+-blue.svg?style=for-the-badge&logo=dart)
+![License](https://img.shields.io/badge/license-MIT-green.svg?style=for-the-badge)
+![Platform](https://img.shields.io/badge/Platform-iOS%20|%20Android-black.svg?style=for-the-badge)
 
-## ✨ Features
+## ✨ Key Features
 
-### 🎯 Core Surveying
-- **Interactive Polygon Drawing** - Draw survey boundaries with tap-to-place markers
-- **Drag & Drop Editing** - Move vertices with precision for accurate boundaries
-- **Real-time Calculations** - Instant area and perimeter measurements
-- **Multi-unit Support** - Display in m², hectares, meters, and kilometers
-- **Undo/Redo** - Full editing history with undo/redo functionality
+### 🗺️ Advanced Mapping System
+- **Offline Maps (FMTC)** - Download map regions for offline use. Features include:
+  - Custom region selection with preview
+  - Configurable download radius (1km - 20km)
+  - Estimated tile count and size calculation
+  - Seamless online/offline switching
+- **Reverse Geocoding** - Automatically fetch human-readable addresses from coordinates using **Nominatim API**.
+- **Interactive Controls** - Smooth zoom controls, pan, rotation, and current location tracking.
 
-### 📊 Data Management
-- **SQLite Database** - Persistent local storage with schema migrations
-- **Survey History** - View, search, and manage all past surveys
-- **CRUD Operations** - Create, read, update, and delete surveys
-- **Address Field** - Store location details with each survey
-- **Automatic Backups** - Database migration support for updates
+### 📍 Precision Surveying Tools
+- **Polygon Drawing** - Intuitive tap-to-place interface for defining boundaries.
+- **Vertex Management** - Drag & drop vertex editing with high precision.
+- **Real-time Calculations** - Instant updates for:
+  - **Area**: m², hectares (ha), km²
+  - **Perimeter**: meters (m), kilometers (km)
+- **Undo/Redo System** - Fail-safe editing with history stack.
 
-### 📤 Export Capabilities
-- **GeoJSON Export** - Standard GIS format compatible with QGIS, ArcGIS, Google Earth
-- **PNG Image Export** - High-quality map screenshots with polygon overlays
-- **PDF Report Export** - Professional reports with:
-  - Survey header (name, date, ID, address)
-  - Embedded map screenshot
-  - Statistics table (area, perimeter, coordinates)
-  - Detailed coordinate table for all vertices
-  - Auto-generated timestamp footer
+### 📤 Professional Export Suite
+- **PDF Reports** - Generate comprehensive survey reports containing:
+  - High-resolution map screenshot
+  - Project details & timestamps
+  - Measurement statistics
+  - Formatted coordinate tables (Lat/Long)
+- **GeoJSON Export** - Standard GIS format compatible with QGIS, ArcGIS, and Google Earth.
+- **Image Export** - Quick sharing of map visuals as PNG files.
 
-### 🗺️ Mapping Features
-- **OpenStreetMap Integration** - Free, open-source map tiles
-- **Offline Tile Caching** - Download maps for offline use with FMTC
-- **Custom Download Regions** - Select area, radius, and zoom levels
-- **Interactive Map Controls** - Pan, zoom, and rotate
-- **Real-time Tile Loading** - Seamless online/offline switching
+### 💾 Data & Architecture
+- **Local Database** - Robust SQLite storage using `drift` for offline persistence.
+- **Clean Architecture** - Scalable codebase separating Data, Domain, and Presentation layers.
+- **State Management** - Modern **Riverpod** implementation for reactive UI updates.
 
-### 🎨 User Experience
-- **Custom Top Notifications** - Elegant slide-down notifications with auto-dismiss
-- **Material Design 3** - Modern, clean UI with dark mode support
-- **Responsive Layout** - Optimized for all screen sizes
-- **Smooth Animations** - Polished transitions and interactions
-- **Professional Theming** - Consistent color scheme and typography
+---
+
+## 📱 User Guide
+
+### 1️⃣ Creating a Survey
+1. Tap **"Mulai Survey Baru"** on the dashboard.
+2. Select a project or create a new one.
+3. Enter survey details (Name, Address).
+4. **Draw**: Tap on the map to place points. Minimum 3 points required for a polygon.
+5. **Edit**: Select a point to drag it, or use Undo/Redo/Clear buttons.
+6. **Save**: Tap the save icon to persist data.
+
+### 2️⃣ Offline Maps (Download)
+1. In Map View, tap the **Download** icon (top right).
+2. Pan the map to your desired area.
+3. Adjust the **Radius Slider** (e.g., 5 km) and zoom depth.
+4. Tap **"Cek Estimasi"** to see download size.
+5. Tap **"Mulai Download"** to cache tiles locally.
+
+### 3️⃣ Export & Share
+1. Open a saved Survey from the list.
+2. Tap the **Share/Export** icon in the App Bar.
+3. Choose format:
+   - **GeoJSON**: For GIS analysis.
+   - **PNG**: For quick sharing.
+   - **PDF Report**: For formal documentation.
+4. Select target app (WhatsApp, Email, Drive, etc.).
+
+### 4️⃣ Getting Address (Geocoding)
+1. In Survey Details, scroll to the Address section.
+2. If address is missing, tap **"Tap untuk ambil alamat dari koordinat"**.
+3. The app will fetch the location name from OpenStreetMap via API.
+
+---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Flutter SDK 3.0 or higher
-- Dart SDK 3.0 or higher
+- Flutter SDK 3.0+
 - Android Studio / VS Code
 - iOS Simulator / Android Emulator
 
 ### Installation
 
 1. **Clone the repository**
-```bash
-git clone https://github.com/yourusername/geosurvey.git
-cd geosurvey
-```
+   ```bash
+   git clone https://github.com/yourusername/geosurvey.git
+   cd geosurvey
+   ```
 
 2. **Install dependencies**
-```bash
-flutter pub get
-```
+   ```bash
+   flutter pub get
+   ```
 
-3. **Generate code**
-```bash
-dart run build_runner build --delete-conflicting-outputs
-```
+3. **Generate code (Riverpod/Freezed/Drift)**
+   ```bash
+   dart run build_runner build --delete-conflicting-outputs
+   ```
 
 4. **Run the app**
-```bash
-flutter run
-```
+   ```bash
+   flutter run
+   ```
 
-## 📱 Usage
+---
 
-### Creating a Survey
+## 🏗️ Technical Architecture
 
-1. **Start New Survey**
-   - Tap "Mulai Survey Baru" on home screen
-   - Enter survey name and optional address
+This project follows **Clean Architecture** principles:
 
-2. **Draw Polygon**
-   - Tap map to place vertices
-   - Minimum 3 points required
-   - Watch real-time area/perimeter updates
-
-3. **Edit Vertices**
-   - Tap "Edit" mode to enable drag & drop
-   - Move markers to adjust boundaries
-   - Use undo/redo for corrections
-
-4. **Save Survey**
-   - Tap save button when complete
-   - Survey stored in local database
-   - Accessible from history
-
-### Exporting Data
-
-1. **Open Survey Details**
-   - Tap any survey from history
-   - View map and statistics
-
-2. **Choose Export Format**
-   - Tap share icon (⬆️) in app bar
-   - Select export type:
-     - **GeoJSON** - For GIS software
-     - **PNG Image** - For presentations
-     - **PDF Report** - For documentation
-
-3. **Share**
-   - Native share dialog opens
-   - Share via WhatsApp, Email, Drive, etc.
-
-### Offline Maps
-
-1. **Download Tiles**
-   - Tap download icon in map view
-   - Select center point on map
-   - Adjust radius (1-20 km)
-   - Set zoom levels (min/max)
-   - View estimated tiles & size
-   - Tap "Mulai Download"
-
-2. **Use Offline**
-   - Downloaded tiles cached permanently
-   - Automatic fallback when offline
-   - Seamless online/offline switching
-
-## 🏗️ Architecture
-
-### Clean Architecture Pattern
 ```
 lib/
-├── core/
-│   ├── constants/      # App-wide constants
-│   ├── database/       # Drift database setup
-│   ├── theme/          # App theming
-│   ├── utils/          # Utility functions
-│   └── widgets/        # Reusable widgets
+├── core/                   # Creating survey entities
+│   ├── constants/          # App-wide constants
+│   ├── database/           # Drift (SQLite) setup
+│   ├── theme/              # Material 3 Theme & Colors
+│   └── utils/              # Calculators, Exporters, Formatters
 ├── features/
-│   ├── map/
-│   │   ├── data/       # Data sources
-│   │   ├── domain/     # Business logic
-│   │   └── presentation/
-│   │       ├── pages/
-│   │       ├── providers/
-│   │       └── widgets/
-│   └── projects/
-│       └── presentation/
-└── main.dart
+│   ├── map/                # Map & Survey Module
+│   │   ├── data/           # Repositories & Data Sources
+│   │   ├── domain/         # Entities & Use Cases
+│   │   └── presentation/   # UI: Pages, Widgets, Providers
+│   └── projects/           # Project Management Module
+└── main.dart               # Entry point
 ```
 
-### State Management
-- **Riverpod** - Modern, compile-safe state management
-- **Code Generation** - Type-safe providers with riverpod_generator
-- **Immutable State** - Freezed for data classes
+### Key Libraries
+| Category | Library | Purpose |
+|----------|---------|---------|
+| **Core** | `flutter_riverpod` | State Management |
+| | `freezed` | Immutable Data Classes |
+| | `drift` | SQLite Database |
+| **Maps** | `flutter_map` | Map Rendering |
+| | `flutter_map_tile_caching` | Offline Maps (v10) |
+| | `latlong2` | Coordinate Math |
+| **Features**| `pdf` | Report Generation |
+| | `screenshot` | Widget Capture |
+| | `http` | API Calls (Geocoding) |
 
-### Database Schema
+---
 
-**Projects Table**
-```sql
-CREATE TABLE projects (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  created_at INTEGER NOT NULL
-);
-```
+## 🎯 Roadmap Status
 
-**Surveys Table**
-```sql
-CREATE TABLE surveys (
-  id TEXT PRIMARY KEY,
-  name TEXT NOT NULL,
-  geometry TEXT NOT NULL,
-  area_size REAL NOT NULL,
-  perimeter REAL NOT NULL,
-  created_at INTEGER NOT NULL,
-  project_id TEXT NOT NULL,
-  address TEXT NOT NULL DEFAULT '',
-  FOREIGN KEY (project_id) REFERENCES projects(id)
-);
-```
+- [x] **Phase 1: Foundation** (Project Setup, Theme, Routing)
+- [x] **Phase 2: Database** (Drift Setup, CRUD)
+- [x] **Phase 3: Offline Maps** (Tile Caching System)
+- [x] **Phase 4: Map UI** (Drawing, Zoom Controls, Layers)
+- [x] **Phase 5: Survey Logic** (Area/Perimeter Calc, Editing)
+- [x] **Phase 6: Projects** (Management & Organization)
+- [x] **Phase 7: Export** (GeoJSON, PNG, PDF)
+- [x] **Phase 8: Geocoding** (Reverse Geocoding API)
+- [ ] **Phase 9: Advanced Tools** (Import, Cloud Sync - Coming Soon)
 
-## 🧪 Testing
-
-### Run Tests
-```bash
-# All tests
-flutter test
-
-# Unit tests only
-flutter test test/unit/
-
-# With coverage
-flutter test --coverage
-```
-
-### Test Coverage
-- **15 Unit Tests** - Core functionality
-- **Geo Calculator** - Area, perimeter, distance calculations
-- **GeoJSON Exporter** - Format validation, coordinate ordering
-- **100% Critical Path Coverage**
-
-### Code Quality
-```bash
-# Analyze code
-flutter analyze
-
-# Format code
-dart format lib/ test/
-```
-
-## 📦 Tech Stack
-
-### Core
-- **Flutter** - Cross-platform UI framework
-- **Dart** - Programming language
-
-### Mapping
-- **flutter_map** - Interactive map widget
-- **flutter_map_tile_caching** - Offline tile storage
-- **latlong2** - Coordinate handling
-- **turf** - Geospatial calculations
-
-### State Management
-- **flutter_riverpod** - State management
-- **riverpod_generator** - Code generation
-- **riverpod_annotation** - Annotations
-
-### Database
-- **drift** - Type-safe SQL database
-- **sqlite3** - SQLite engine
-- **sqlite3_flutter_libs** - Platform bindings
-
-### Export
-- **pdf** - PDF generation
-- **screenshot** - Map capture
-- **share_plus** - Native sharing
-
-### Utilities
-- **uuid** - Unique ID generation
-- **intl** - Internationalization
-- **path_provider** - File system access
-
-## 🎯 Roadmap
-
-### v2.0 (Planned)
-- [ ] Manual coordinate input
-- [ ] Coordinate display on markers
-- [ ] GPS integration for auto-tracking
-- [ ] Cloud sync & backup
-- [ ] Multi-user collaboration
-- [ ] Advanced measurement tools
-- [ ] Custom map layers
-- [ ] Offline-first architecture
-
-### v1.1 (Future)
-- [ ] Import from GeoJSON
-- [ ] Batch export
-- [ ] Survey templates
-- [ ] Custom units
-- [ ] Measurement history
-- [ ] Export to KML/KMZ
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
+Contributions are welcome!
+1. Fork the repo
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
+---
 
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 👨‍💻 Author
-
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
-
-## 🙏 Acknowledgments
-
-- OpenStreetMap contributors for map data
-- Flutter team for amazing framework
-- flutter_map community for mapping tools
-- All open-source contributors
-
-## 📞 Support
-
-For support, email your.email@example.com or open an issue on GitHub.
 
 ---
 
