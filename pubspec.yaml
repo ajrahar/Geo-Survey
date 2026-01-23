@@ -1,5 +1,5 @@
 name: geosurvey
-description: "Offline GIS data collection app for land surveying with advanced polygon drawing and geospatial calculations."
+description: "Geo Survey - Offline GIS data collector for land surveying"
 publish_to: 'none'
 
 version: 1.0.0+1

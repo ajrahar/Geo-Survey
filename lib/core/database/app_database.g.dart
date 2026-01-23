@@ -402,6 +402,18 @@ class $SurveysTable extends Surveys with TableInfo<$SurveysTable, Survey> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _addressMeta = const VerificationMeta(
+    'address',
+  );
+  @override
+  late final GeneratedColumn<String> address = GeneratedColumn<String>(
+    'address',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(''),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -411,6 +423,7 @@ class $SurveysTable extends Surveys with TableInfo<$SurveysTable, Survey> {
     perimeter,
     createdAt,
     projectId,
+    address,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -475,6 +488,12 @@ class $SurveysTable extends Surveys with TableInfo<$SurveysTable, Survey> {
         projectId.isAcceptableOrUnknown(data['project_id']!, _projectIdMeta),
       );
     }
+    if (data.containsKey('address')) {
+      context.handle(
+        _addressMeta,
+        address.isAcceptableOrUnknown(data['address']!, _addressMeta),
+      );
+    }
     return context;
   }
 
@@ -512,6 +531,10 @@ class $SurveysTable extends Surveys with TableInfo<$SurveysTable, Survey> {
         DriftSqlType.string,
         data['${effectivePrefix}project_id'],
       ),
+      address: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}address'],
+      )!,
     );
   }
 
@@ -525,7 +548,7 @@ class Survey extends DataClass implements Insertable<Survey> {
   final String id;
   final String name;
 
-  /// JSON string of List<LatLng> coordinates
+  /// JSON string of List&lt;LatLng&gt; coordinates
   /// Format: [{"lat": -6.xxx, "lng": 106.xxx}, ...]
   final String geometry;
 
@@ -538,6 +561,9 @@ class Survey extends DataClass implements Insertable<Survey> {
 
   /// Foreign key to Projects table (nullable for surveys without project)
   final String? projectId;
+
+  /// Address/location name (reverse geocoded or manual)
+  final String address;
   const Survey({
     required this.id,
     required this.name,
@@ -546,6 +572,7 @@ class Survey extends DataClass implements Insertable<Survey> {
     required this.perimeter,
     required this.createdAt,
     this.projectId,
+    required this.address,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -559,6 +586,7 @@ class Survey extends DataClass implements Insertable<Survey> {
     if (!nullToAbsent || projectId != null) {
       map['project_id'] = Variable<String>(projectId);
     }
+    map['address'] = Variable<String>(address);
     return map;
   }
 
@@ -573,6 +601,7 @@ class Survey extends DataClass implements Insertable<Survey> {
       projectId: projectId == null && nullToAbsent
           ? const Value.absent()
           : Value(projectId),
+      address: Value(address),
     );
   }
 
@@ -589,6 +618,7 @@ class Survey extends DataClass implements Insertable<Survey> {
       perimeter: serializer.fromJson<double>(json['perimeter']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       projectId: serializer.fromJson<String?>(json['projectId']),
+      address: serializer.fromJson<String>(json['address']),
     );
   }
   @override
@@ -602,6 +632,7 @@ class Survey extends DataClass implements Insertable<Survey> {
       'perimeter': serializer.toJson<double>(perimeter),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'projectId': serializer.toJson<String?>(projectId),
+      'address': serializer.toJson<String>(address),
     };
   }
 
@@ -613,6 +644,7 @@ class Survey extends DataClass implements Insertable<Survey> {
     double? perimeter,
     DateTime? createdAt,
     Value<String?> projectId = const Value.absent(),
+    String? address,
   }) => Survey(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -621,6 +653,7 @@ class Survey extends DataClass implements Insertable<Survey> {
     perimeter: perimeter ?? this.perimeter,
     createdAt: createdAt ?? this.createdAt,
     projectId: projectId.present ? projectId.value : this.projectId,
+    address: address ?? this.address,
   );
   Survey copyWithCompanion(SurveysCompanion data) {
     return Survey(
@@ -631,6 +664,7 @@ class Survey extends DataClass implements Insertable<Survey> {
       perimeter: data.perimeter.present ? data.perimeter.value : this.perimeter,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       projectId: data.projectId.present ? data.projectId.value : this.projectId,
+      address: data.address.present ? data.address.value : this.address,
     );
   }
 
@@ -643,7 +677,8 @@ class Survey extends DataClass implements Insertable<Survey> {
           ..write('areaSize: $areaSize, ')
           ..write('perimeter: $perimeter, ')
           ..write('createdAt: $createdAt, ')
-          ..write('projectId: $projectId')
+          ..write('projectId: $projectId, ')
+          ..write('address: $address')
           ..write(')'))
         .toString();
   }
@@ -657,6 +692,7 @@ class Survey extends DataClass implements Insertable<Survey> {
     perimeter,
     createdAt,
     projectId,
+    address,
   );
   @override
   bool operator ==(Object other) =>
@@ -668,7 +704,8 @@ class Survey extends DataClass implements Insertable<Survey> {
           other.areaSize == this.areaSize &&
           other.perimeter == this.perimeter &&
           other.createdAt == this.createdAt &&
-          other.projectId == this.projectId);
+          other.projectId == this.projectId &&
+          other.address == this.address);
 }
 
 class SurveysCompanion extends UpdateCompanion<Survey> {
@@ -679,6 +716,7 @@ class SurveysCompanion extends UpdateCompanion<Survey> {
   final Value<double> perimeter;
   final Value<DateTime> createdAt;
   final Value<String?> projectId;
+  final Value<String> address;
   final Value<int> rowid;
   const SurveysCompanion({
     this.id = const Value.absent(),
@@ -688,6 +726,7 @@ class SurveysCompanion extends UpdateCompanion<Survey> {
     this.perimeter = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.projectId = const Value.absent(),
+    this.address = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   SurveysCompanion.insert({
@@ -698,6 +737,7 @@ class SurveysCompanion extends UpdateCompanion<Survey> {
     required double perimeter,
     required DateTime createdAt,
     this.projectId = const Value.absent(),
+    this.address = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : id = Value(id),
        name = Value(name),
@@ -713,6 +753,7 @@ class SurveysCompanion extends UpdateCompanion<Survey> {
     Expression<double>? perimeter,
     Expression<DateTime>? createdAt,
     Expression<String>? projectId,
+    Expression<String>? address,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
@@ -723,6 +764,7 @@ class SurveysCompanion extends UpdateCompanion<Survey> {
       if (perimeter != null) 'perimeter': perimeter,
       if (createdAt != null) 'created_at': createdAt,
       if (projectId != null) 'project_id': projectId,
+      if (address != null) 'address': address,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -735,6 +777,7 @@ class SurveysCompanion extends UpdateCompanion<Survey> {
     Value<double>? perimeter,
     Value<DateTime>? createdAt,
     Value<String?>? projectId,
+    Value<String>? address,
     Value<int>? rowid,
   }) {
     return SurveysCompanion(
@@ -745,6 +788,7 @@ class SurveysCompanion extends UpdateCompanion<Survey> {
       perimeter: perimeter ?? this.perimeter,
       createdAt: createdAt ?? this.createdAt,
       projectId: projectId ?? this.projectId,
+      address: address ?? this.address,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -773,6 +817,9 @@ class SurveysCompanion extends UpdateCompanion<Survey> {
     if (projectId.present) {
       map['project_id'] = Variable<String>(projectId.value);
     }
+    if (address.present) {
+      map['address'] = Variable<String>(address.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -789,6 +836,7 @@ class SurveysCompanion extends UpdateCompanion<Survey> {
           ..write('perimeter: $perimeter, ')
           ..write('createdAt: $createdAt, ')
           ..write('projectId: $projectId, ')
+          ..write('address: $address, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -993,6 +1041,7 @@ typedef $$SurveysTableCreateCompanionBuilder =
       required double perimeter,
       required DateTime createdAt,
       Value<String?> projectId,
+      Value<String> address,
       Value<int> rowid,
     });
 typedef $$SurveysTableUpdateCompanionBuilder =
@@ -1004,6 +1053,7 @@ typedef $$SurveysTableUpdateCompanionBuilder =
       Value<double> perimeter,
       Value<DateTime> createdAt,
       Value<String?> projectId,
+      Value<String> address,
       Value<int> rowid,
     });
 
@@ -1048,6 +1098,11 @@ class $$SurveysTableFilterComposer
 
   ColumnFilters<String> get projectId => $composableBuilder(
     column: $table.projectId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get address => $composableBuilder(
+    column: $table.address,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -1095,6 +1150,11 @@ class $$SurveysTableOrderingComposer
     column: $table.projectId,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get address => $composableBuilder(
+    column: $table.address,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$SurveysTableAnnotationComposer
@@ -1126,6 +1186,9 @@ class $$SurveysTableAnnotationComposer
 
   GeneratedColumn<String> get projectId =>
       $composableBuilder(column: $table.projectId, builder: (column) => column);
+
+  GeneratedColumn<String> get address =>
+      $composableBuilder(column: $table.address, builder: (column) => column);
 }
 
 class $$SurveysTableTableManager
@@ -1163,6 +1226,7 @@ class $$SurveysTableTableManager
                 Value<double> perimeter = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<String?> projectId = const Value.absent(),
+                Value<String> address = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SurveysCompanion(
                 id: id,
@@ -1172,6 +1236,7 @@ class $$SurveysTableTableManager
                 perimeter: perimeter,
                 createdAt: createdAt,
                 projectId: projectId,
+                address: address,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -1183,6 +1248,7 @@ class $$SurveysTableTableManager
                 required double perimeter,
                 required DateTime createdAt,
                 Value<String?> projectId = const Value.absent(),
+                Value<String> address = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => SurveysCompanion.insert(
                 id: id,
@@ -1192,6 +1258,7 @@ class $$SurveysTableTableManager
                 perimeter: perimeter,
                 createdAt: createdAt,
                 projectId: projectId,
+                address: address,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

@@ -3,7 +3,7 @@ class AppConstants {
   AppConstants._();
 
   // App Info
-  static const String appName = 'GeoSurvey Pro';
+  static const String appName = 'Geo Survey';
   static const String appVersion = '1.0.0';
 
   // Database

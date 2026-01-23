@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geosurvey/core/constants/map_constants.dart';
 import 'package:geosurvey/core/theme/app_colors.dart';
 import 'package:geosurvey/core/utils/geo_calculator.dart';
+import 'package:geosurvey/core/widgets/top_notification.dart';
 import 'package:geosurvey/features/map/presentation/providers/database_providers.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
@@ -181,12 +182,9 @@ class SurveyDetailPage extends ConsumerWidget {
     dynamic survey,
     List<LatLng> vertices,
   ) {
-    // Implement GeoJSON export
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Fitur export GeoJSON akan segera tersedia'),
-        duration: Duration(seconds: 2),
-      ),
+    TopNotification.showInfo(
+      context,
+      'Fitur export GeoJSON akan segera tersedia',
     );
   }
 }

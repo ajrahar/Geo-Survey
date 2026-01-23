@@ -26,6 +26,7 @@ class SurveyRepository {
     required List<LatLng> vertices,
     required double areaSize,
     required double perimeter,
+    String address = '',
   }) async {
     // Serialize vertices to JSON
     final geometryJson = jsonEncode(
@@ -40,6 +41,7 @@ class SurveyRepository {
       perimeter: Value(perimeter),
       createdAt: Value(DateTime.now()),
       projectId: const Value(null),
+      address: Value(address),
     );
 
     await _database.insertSurvey(survey);
@@ -53,6 +55,7 @@ class SurveyRepository {
     required List<LatLng> vertices,
     required double areaSize,
     required double perimeter,
+    String address = '',
   }) async {
     final geometryJson = jsonEncode(
       vertices.map((v) => {'lat': v.latitude, 'lng': v.longitude}).toList(),
@@ -66,6 +69,7 @@ class SurveyRepository {
       perimeter: Value(perimeter),
       createdAt: Value(DateTime.now()),
       projectId: const Value(null),
+      address: Value(address),
     );
 
     await _database.updateSurvey(survey);

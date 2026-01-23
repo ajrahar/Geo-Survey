@@ -11,7 +11,7 @@ class ProjectListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('GeoSurvey Pro'),
+        title: const Text('Geo Survey'),
         actions: [
           IconButton(
             icon: const Icon(Icons.history),
@@ -38,7 +38,7 @@ class ProjectListPage extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'Selamat Datang di GeoSurvey Pro',
+                'Selamat Datang di Geo Survey',
                 style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geosurvey/core/theme/app_colors.dart';
 import 'package:geosurvey/core/utils/geo_calculator.dart';
+import 'package:geosurvey/core/widgets/top_notification.dart';
 import 'package:geosurvey/features/map/presentation/providers/database_providers.dart';
 import 'package:geosurvey/features/map/presentation/pages/survey_detail_page.dart';
 import 'package:intl/intl.dart';
@@ -192,12 +193,7 @@ class _SurveyCard extends ConsumerWidget {
 
               if (context.mounted) {
                 Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Survey berhasil dihapus'),
-                    backgroundColor: AppColors.success,
-                  ),
-                );
+                TopNotification.showSuccess(context, 'Survey berhasil dihapus');
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),

@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geosurvey/core/constants/map_constants.dart';
 import 'package:geosurvey/core/theme/app_colors.dart';
+import 'package:geosurvey/core/widgets/top_notification.dart';
 import 'package:geosurvey/features/map/presentation/providers/drawing_state_provider.dart';
 import 'package:geosurvey/features/map/presentation/providers/database_providers.dart';
 import 'package:geosurvey/features/map/presentation/widgets/polygon_layer_widget.dart';
@@ -37,11 +38,9 @@ class _MapPageState extends ConsumerState<MapPage> {
             icon: const Icon(Icons.download),
             tooltip: 'Download Peta Offline',
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Fitur download peta akan segera tersedia'),
-                  duration: Duration(seconds: 2),
-                ),
+              TopNotification.showInfo(
+                context,
+                'Fitur download peta akan segera tersedia',
               );
             },
           ),
@@ -155,13 +154,7 @@ class _MapPageState extends ConsumerState<MapPage> {
           .updateVertex(drawingState.selectedVertexIndex!, point);
       ref.read(drawingStateProvider.notifier).deselectVertex();
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Titik berhasil dipindahkan'),
-          duration: Duration(seconds: 1),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      TopNotification.showSuccess(context, 'Titik berhasil dipindahkan');
     }
     // Only add vertex if in add point mode
     else if (drawingState.mode == DrawingMode.addPoint) {
@@ -173,11 +166,9 @@ class _MapPageState extends ConsumerState<MapPage> {
     final drawingState = ref.read(drawingStateProvider);
 
     if (!drawingState.canComplete) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Minimal 3 titik untuk menyimpan polygon'),
-          backgroundColor: AppColors.error,
-        ),
+      TopNotification.showError(
+        context,
+        'Minimal 3 titik untuk menyimpan polygon',
       );
       return;
     }
@@ -226,11 +217,9 @@ class _MapPageState extends ConsumerState<MapPage> {
             onPressed: () async {
               final name = nameController.text.trim();
               if (name.isEmpty) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Nama survey tidak boleh kosong'),
-                    backgroundColor: AppColors.error,
-                  ),
+                TopNotification.showError(
+                  context,
+                  'Nama survey tidak boleh kosong',
                 );
                 return;
               }
@@ -253,12 +242,9 @@ class _MapPageState extends ConsumerState<MapPage> {
                   Navigator.pop(context); // Close dialog
                   ref.read(drawingStateProvider.notifier).cancelDrawing();
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Survey "$name" berhasil disimpan!'),
-                      backgroundColor: AppColors.success,
-                      duration: const Duration(seconds: 3),
-                    ),
+                  TopNotification.showSuccess(
+                    context,
+                    'Survey "$name" berhasil disimpan!',
                   );
 
                   // Navigate back
@@ -266,12 +252,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error: $e'),
-                      backgroundColor: AppColors.error,
-                    ),
-                  );
+                  TopNotification.showError(context, 'Error: $e');
                 }
               }
             },

@@ -39,6 +39,9 @@ class Surveys extends Table {
   /// Foreign key to Projects table (nullable for surveys without project)
   TextColumn get projectId => text().nullable()();
 
+  /// Address/location name (reverse geocoded or manual)
+  TextColumn get address => text().withDefault(const Constant(''))();
+
   @override
   Set<Column> get primaryKey => {id};
 }
@@ -49,7 +52,17 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) {
+        // Add address column to surveys table
+        await migrator.addColumn(surveys, surveys.address);
+      }
+    },
+  );
 
   // Projects CRUD
   Future<List<Project>> getAllProjects() => select(projects).get();
