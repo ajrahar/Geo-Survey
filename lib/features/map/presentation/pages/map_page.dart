@@ -3,9 +3,11 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geosurvey/core/constants/map_constants.dart';
 import 'package:geosurvey/core/theme/app_colors.dart';
+import 'package:geosurvey/core/utils/tile_cache_manager.dart';
 import 'package:geosurvey/core/widgets/top_notification.dart';
 import 'package:geosurvey/features/map/presentation/providers/drawing_state_provider.dart';
 import 'package:geosurvey/features/map/presentation/providers/database_providers.dart';
+import 'package:geosurvey/features/map/presentation/pages/tile_download_page.dart';
 import 'package:geosurvey/features/map/presentation/widgets/polygon_layer_widget.dart';
 import 'package:geosurvey/features/map/presentation/widgets/drawing_toolbar.dart';
 import 'package:geosurvey/features/map/presentation/widgets/info_panel.dart';
@@ -38,9 +40,11 @@ class _MapPageState extends ConsumerState<MapPage> {
             icon: const Icon(Icons.download),
             tooltip: 'Download Peta Offline',
             onPressed: () {
-              TopNotification.showInfo(
+              Navigator.push(
                 context,
-                'Fitur download peta akan segera tersedia',
+                MaterialPageRoute(
+                  builder: (context) => const TileDownloadPage(),
+                ),
               );
             },
           ),
@@ -66,7 +70,7 @@ class _MapPageState extends ConsumerState<MapPage> {
               TileLayer(
                 urlTemplate: MapConstants.osmTileUrl,
                 userAgentPackageName: 'com.example.geosurvey',
-                tileProvider: NetworkTileProvider(),
+                tileProvider: TileCacheManager.getTileProvider(),
               ),
 
               // Polygon and Markers Layer
