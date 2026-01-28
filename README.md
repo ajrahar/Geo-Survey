@@ -23,6 +23,7 @@
 
 ### 📤 Professional Data Management
 - **Universal Export** - Generate **PDF Reports** (with maps & stats), **GeoJSON** (for GIS apps), and **PNG Images**.
+- **Survey History** - Manage saved surveys, view details, and initiate new actions from a dedicated history page.
 - **Localization** - Full support for **English** and **Bahasa Indonesia**.
 - **Local Database** - SQLite-powered storage for reliable offline data persistence.
 
@@ -83,7 +84,7 @@ lib/
 - [x] **Phase 1: Foundation** (Architecture, Database, UI)
 - [x] **Phase 2: Core Mapping** (Offline Maps, Drawing, Export)
 - [x] **Phase 3: Advanced Features** (Layers, Ruler, GPS Track, Photos)
-- [x] **Phase 4: Integration** (KML/GeoJSON Import, Localization)
+- [x] **Phase 4: Integration** (KML/GeoJSON Import, Localization, History Page)
 - [ ] **Phase 5: Cloud Sync** (Future Work)
 
 ---

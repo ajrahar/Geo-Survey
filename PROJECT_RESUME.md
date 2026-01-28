@@ -1,39 +1,62 @@
-# Project Resume: Geo Survey
+# 📄 Project Resume: Geo Survey
 
-## Project Title
-**Geo Survey - Professional Offline GIS & Land Surveying Application**
+## 🚀 Project Overview
+**Geo Survey** is a professional-grade mobile application designed for land surveying, geospatial measurements, and field data management. Built with **Flutter**, it operates fully offline, providing surveyors with advanced mapping tools, coordinate tracking, and reliable data persistence.
 
-## Project Overview
-Geo Survey is a comprehensive mobile application developed using **Flutter**, designed to modernize land surveying processes. It functions as a pocket GIS tool, allowing professionals to map areas, calculate measurements, and document field data efficiently, even in **offline environments**. The app replaces traditional paper-based methods with a digital, precise, and feature-rich solution.
-
-## Key Contributions & Technical Implementations
-
-### 1. Advanced Geospatial Features
-- **Interactive Mapping**: Implemented `flutter_map` for rendering heavy-duty maps with smooth custom interactions (drawing, dragging vertices).
-- **Offline Capabilities**: Integrated **FMTC (Flutter Map Tile Caching)** to allow users to download map regions (satellite/terrain) for use in remote areas without internet access.
-- **GPS Tracking (Walk-to-Draw)**: Developed a real-time tracking service using `geolocator` to automatically generate polygon boundaries by tracking the user's movement, filtering noise to ensure precision.
-- **GIS Data Interoperability**: Built a custom parsing engine using `xml` and `json` to **Import KML (Google Earth)** and **GeoJSON** files, and export data back to standard GIS formats.
-
-### 2. Robust Architecture & State Management
-- **Clean Architecture**: Structured the app into clearly defined Data, Domain, and Presentation layers to ensure scalability and testability.
-- **State Management**: Utilized **Riverpod** for efficient, reactive state management, handling complex states like drawing modes (measure vs polygon), GPS streams, and asynchronous database operations.
-- **Local Persistence**: Implemented **Drift (SQLite)** for a type-safe, relational local database to store surveys, points, photos, and project structures offline.
-
-### 3. Professional Data Reporting
-- **PDF Report Generation**: Created a sophisticated reporting engine using the `pdf` library that combines map screenshots, statistical data (area/perimeter), and formatted tables into shareable documents.
-- **Multimedia Documentation**: Integrated `image_picker` and local file management to allow attaching and managing site photos for each survey.
-
-### 4. User Experience & Localization
-- **Multi-Language Support**: Implemented full Internationalization (i18n) for **English** and **Indonesian**, with persistent language settings.
-- **Intuitive UI**: Designed a tool-centric interface with floating, adaptive controls for map layers, measuring tools, and drawing actions.
-
-## Technology Stack
-- **Framework**: Flutter (Dart)
-- **State Management**: Riverpod
-- **Database**: Drift (SQLite)
-- **Maps**: Flutter Map, Leaflet, OpenStreetMap
-- **Native Features**: GPS (Geolocator), Camera, File System
-- **Formats**: GeoJSON, KML, PDF
+The project demonstrates advanced mobile capabilities including **GPS tracking**, **custom map rendering**, **spatial calculations**, **multimedia attachments**, and **interoperability with GIS standards (GeoJSON/KML)**.
 
 ---
-*This project demonstrates proficiency in building complex, offline-first mobile applications with heavy usage of hardware sensors, local databases, and geospatial mathematics.*
+
+## 🛠️ Technical Stack
+
+- **Framework**: Flutter (Dart 3.0+)
+- **Architecture**: Clean Architecture (Layered: Data, Domain, Presentation)
+- **State Management**: Riverpod (Providers, Consumers, Notifiers)
+- **Database**: Drift (SQLite abstraction with strict schema)
+- **Maps**: `flutter_map` (OpenStreetMap integration, Offline Tile Caching via FMTC)
+- **Geospatial**: `latlong2`, `geolocator`, `xml` (KML parsing)
+- **Localization**: `flutter_localizations` (ARB-based i18n for EN/ID)
+- **PDF/Image**: `pdf` package for reports, `screenshot` for map capturing
+
+---
+
+## 🌟 Key Features Implemented
+
+### 1. Interactive Map & Drawing
+- **Vertex Editing**: Drag-and-drop points to adjust polygons.
+- **Tools**: Ruler (distance measurement), Walk-to-Draw (GPS recording), and Satellite/Terrain layers.
+- **Offline Mode**: Download map tiles by radius for use without internet.
+
+### 2. Data Management
+- **Survey History**: List, view, and manage past surveys with detailed statistics (Area, Perimeter).
+- **Photo Documentation**: Attach site photos to specific surveys using Camera or Gallery.
+- **Import**: Support for importing **KML** (Google Earth) and **GeoJSON**.
+
+### 3. Reporting & Export
+- **PDF Reports**: Professional reports containing map screenshots, property details, coordinates list, and photos.
+- **GeoJSON Export**: Standard GIS format export for interoperability with ArcGIS/QGIS.
+- **Image Export**: High-resolution PNG export of the surveyed boundary.
+
+### 4. User Experience
+- **Localization**: Full support for **Bahasa Indonesia** and **English**.
+- **Usability**: Real-time area calculation, intuitive FAB controls, and automated address fetching (Reverse Geocoding).
+
+---
+
+## 💡 Technical Challenges Solved
+
+- **Offline Tile Management**: Implemented a caching mechanism using `flutter_map_tile_caching` to allow surveyors to work in remote areas with no signal.
+- **Complex Spatial Math**: Implemented Shoelace formula for area calculation and Haversine formula for perimeter/distance, handling earth's curvature.
+- **Clean State Management**: Decoupled drawing logic (drag, add, measure) into a `DrawingStateNotifier` to maintain UI responsiveness and testability.
+- **File System Handling**: robust handling of external file imports/exports on Android/iOS storage systems.
+
+---
+
+## 📅 Development Status
+Completed phases:
+- [x] Core Architecture & Database
+- [x] Basic Mapping & Polygon Drawing
+- [x] Advanced Tools (Layers, Ruler, GPS)
+- [x] Data Integration (Import/Export, Localization)
+
+**Current Version**: 1.0.0 (Production Ready MVP)
