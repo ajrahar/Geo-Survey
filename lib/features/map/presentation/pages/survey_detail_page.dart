@@ -10,6 +10,9 @@ import 'package:geosurvey/core/utils/file_exporter.dart';
 import 'package:geosurvey/core/utils/pdf_exporter.dart';
 import 'package:geosurvey/core/utils/geocoding_service.dart';
 import 'package:geosurvey/core/widgets/top_notification.dart';
+import 'package:geosurvey/core/localization/l10n/app_localizations.dart';
+import 'package:geosurvey/core/utils/tile_cache_manager.dart';
+import 'package:geosurvey/features/map/presentation/widgets/layer_selector_widget.dart';
 import 'package:geosurvey/features/map/presentation/providers/database_providers.dart';
 import 'package:geosurvey/core/database/app_database.dart';
 import 'package:intl/intl.dart';
@@ -31,6 +34,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
   final ScreenshotController _screenshotController = ScreenshotController();
   String? _fetchedAddress;
   bool _isLoadingAddress = false;
+  MapLayerType _currentLayer = MapLayerType.normal;
 
   @override
   void dispose() {
@@ -102,6 +106,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
   @override
   Widget build(BuildContext context) {
     final repository = ref.watch(surveyRepositoryProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return FutureBuilder(
       future: repository.getSurveyById(widget.surveyId),
@@ -157,8 +162,11 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                         ),
                         children: [
                           TileLayer(
-                            urlTemplate: MapConstants.osmTileUrl,
+                            urlTemplate: _getTileUrl(_currentLayer),
                             userAgentPackageName: 'com.example.geosurvey',
+                            tileProvider: _currentLayer == MapLayerType.normal
+                                ? TileCacheManager.getTileProvider()
+                                : null,
                           ),
                           if (vertices.length >= 2)
                             PolygonLayer(
@@ -201,6 +209,20 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                             }).toList(),
                           ),
                         ],
+                      ),
+
+                      // Layer Selector
+                      Positioned(
+                        top: 16,
+                        right: 16,
+                        child: LayerSelectorWidget(
+                          currentLayer: _currentLayer,
+                          onLayerChanged: (layer) {
+                            setState(() {
+                              _currentLayer = layer;
+                            });
+                          },
+                        ),
                       ),
 
                       // Zoom Controls
@@ -265,7 +287,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Detail Survey',
+                          l10n.surveyDetail,
                           style: Theme.of(context).textTheme.titleLarge
                               ?.copyWith(fontWeight: FontWeight.w600),
                         ),
@@ -273,15 +295,15 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
 
                         _DetailRow(
                           icon: Icons.calendar_today,
-                          label: 'Tanggal Dibuat',
+                          label: l10n.dateCreated,
                           value: dateFormat.format(survey.createdAt),
                         ),
                         const SizedBox(height: 12),
 
                         _DetailRow(
                           icon: Icons.location_on,
-                          label: 'Jumlah Titik',
-                          value: '${vertices.length} titik',
+                          label: l10n.pointCount,
+                          value: l10n.pointCountValue(vertices.length),
                         ),
                         const SizedBox(height: 12),
 
@@ -289,13 +311,13 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                         if (survey.address.isNotEmpty)
                           _DetailRow(
                             icon: Icons.location_city,
-                            label: 'Alamat',
+                            label: l10n.address,
                             value: survey.address,
                           )
                         else if (_fetchedAddress != null)
                           _DetailRow(
                             icon: Icons.location_city,
-                            label: 'Alamat (dari koordinat)',
+                            label: l10n.addressFromCoords,
                             value: _fetchedAddress!,
                           )
                         else if (_isLoadingAddress)
@@ -307,10 +329,10 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                                 color: Colors.grey,
                               ),
                               const SizedBox(width: 12),
-                              const Expanded(
+                              Expanded(
                                 child: Text(
-                                  'Mengambil alamat...',
-                                  style: TextStyle(
+                                  l10n.fetchingAddress,
+                                  style: const TextStyle(
                                     color: Colors.grey,
                                     fontSize: 14,
                                   ),
@@ -336,10 +358,10 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                                   color: Colors.blue,
                                 ),
                                 const SizedBox(width: 12),
-                                const Expanded(
+                                Expanded(
                                   child: Text(
-                                    'Tap untuk ambil alamat dari koordinat',
-                                    style: TextStyle(
+                                    l10n.fetchAddress,
+                                    style: const TextStyle(
                                       color: Colors.blue,
                                       fontSize: 14,
                                     ),
@@ -357,7 +379,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
 
                         _DetailRow(
                           icon: Icons.crop_square,
-                          label: 'Luas Area',
+                          label: l10n.areaSize,
                           value: GeoCalculator.formatArea(survey.areaSize),
                           valueColor: AppColors.primary,
                         ),
@@ -365,7 +387,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
 
                         _DetailRow(
                           icon: Icons.straighten,
-                          label: 'Keliling',
+                          label: l10n.perimeter,
                           value: GeoCalculator.formatDistance(survey.perimeter),
                           valueColor: AppColors.primary,
                         ),
@@ -378,7 +400,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Dokumentasi Foto',
+                              l10n.photoDocumentation,
                               style: Theme.of(context).textTheme.titleMedium
                                   ?.copyWith(fontWeight: FontWeight.bold),
                             ),
@@ -389,7 +411,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                                 Icons.add_a_photo,
                                 color: AppColors.primary,
                               ),
-                              tooltip: 'Tambah Foto',
+                              tooltip: l10n.addPhoto,
                             ),
                           ],
                         ),
@@ -409,9 +431,9 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                                     color: Colors.grey.shade200,
                                   ),
                                 ),
-                                child: const Text(
-                                  'Belum ada foto dokumentasi',
-                                  style: TextStyle(color: Colors.grey),
+                                child: Text(
+                                  l10n.noPhotos,
+                                  style: const TextStyle(color: Colors.grey),
                                   textAlign: TextAlign.center,
                                 ),
                               );
@@ -485,7 +507,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
 
                         // Coordinates section
                         Text(
-                          'Koordinat Titik',
+                          l10n.coordinates,
                           style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
@@ -601,6 +623,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
     dynamic survey,
     List<LatLng> vertices,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) => SafeArea(
@@ -609,29 +632,29 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
           children: [
             ListTile(
               leading: const Icon(Icons.code, color: AppColors.primary),
-              title: const Text('Export GeoJSON'),
-              subtitle: const Text('Format standar untuk GIS'),
+              title: Text(l10n.exportGeoJson),
+              subtitle: Text(l10n.exportGeoJsonSubtitle),
               onTap: () {
                 Navigator.pop(context);
-                _exportGeoJSON(context, survey, vertices);
+                _exportGeoJSON(context, survey, vertices, l10n);
               },
             ),
             ListTile(
               leading: const Icon(Icons.image, color: AppColors.success),
-              title: const Text('Export PNG Image'),
-              subtitle: const Text('Screenshot peta sebagai gambar'),
+              title: Text(l10n.exportPng),
+              subtitle: Text(l10n.exportPngSubtitle),
               onTap: () {
                 Navigator.pop(context);
-                _exportImage(context, survey);
+                _exportImage(context, survey, l10n);
               },
             ),
             ListTile(
               leading: const Icon(Icons.picture_as_pdf, color: AppColors.error),
-              title: const Text('Export PDF Report'),
-              subtitle: const Text('Laporan lengkap dengan statistik'),
+              title: Text(l10n.exportPdf),
+              subtitle: Text(l10n.exportPdfSubtitle),
               onTap: () {
                 Navigator.pop(context);
-                _exportPDF(context, survey, vertices);
+                _exportPDF(context, survey, vertices, l10n);
               },
             ),
           ],
@@ -644,6 +667,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
     BuildContext context,
     dynamic survey,
     List<LatLng> vertices,
+    AppLocalizations l10n,
   ) async {
     try {
       // Generate GeoJSON
@@ -672,18 +696,25 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
       );
 
       if (context.mounted) {
-        TopNotification.showSuccess(context, 'GeoJSON berhasil di-export!');
+        TopNotification.showSuccess(context, l10n.exportSuccess('GeoJSON'));
       }
     } catch (e) {
       if (context.mounted) {
-        TopNotification.showError(context, 'Gagal export GeoJSON: $e');
+        TopNotification.showError(
+          context,
+          l10n.exportError('GeoJSON', e.toString()),
+        );
       }
     }
   }
 
-  void _exportImage(BuildContext context, dynamic survey) async {
+  void _exportImage(
+    BuildContext context,
+    dynamic survey,
+    AppLocalizations l10n,
+  ) async {
     try {
-      TopNotification.showInfo(context, 'Mengambil screenshot...');
+      TopNotification.showInfo(context, l10n.capturingScreenshot);
 
       final imageBytes = await _screenshotController.capture();
       if (imageBytes == null) {
@@ -710,11 +741,14 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
       );
 
       if (context.mounted) {
-        TopNotification.showSuccess(context, 'Image berhasil di-export!');
+        TopNotification.showSuccess(context, l10n.exportSuccess('Image'));
       }
     } catch (e) {
       if (context.mounted) {
-        TopNotification.showError(context, 'Gagal export image: $e');
+        TopNotification.showError(
+          context,
+          l10n.exportError('Image', e.toString()),
+        );
       }
     }
   }
@@ -723,9 +757,10 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
     BuildContext context,
     dynamic survey,
     List<LatLng> vertices,
+    AppLocalizations l10n,
   ) async {
     try {
-      TopNotification.showInfo(context, 'Membuat PDF report...');
+      TopNotification.showInfo(context, l10n.generatingPdf);
 
       // Capture screenshot first
       final mapScreenshot = await _screenshotController.capture();
@@ -757,16 +792,20 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
       );
 
       if (context.mounted) {
-        TopNotification.showSuccess(context, 'PDF report berhasil di-export!');
+        TopNotification.showSuccess(context, l10n.exportSuccess('PDF Report'));
       }
     } catch (e) {
       if (context.mounted) {
-        TopNotification.showError(context, 'Gagal export PDF: $e');
+        TopNotification.showError(
+          context,
+          l10n.exportError('PDF', e.toString()),
+        );
       }
     }
   }
 
   void _showPhotoOptions(BuildContext context, String surveyId) {
+    final l10n = AppLocalizations.of(context)!;
     showModalBottomSheet(
       context: context,
       builder: (context) => SafeArea(
@@ -775,7 +814,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
           children: [
             ListTile(
               leading: const Icon(Icons.camera_alt),
-              title: const Text('Ambil Foto (Kamera)'),
+              title: Text(l10n.cameraOption),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(surveyId, ImageSource.camera);
@@ -783,7 +822,7 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
             ),
             ListTile(
               leading: const Icon(Icons.photo_library),
-              title: const Text('Pilih dari Galeri'),
+              title: Text(l10n.galleryOption),
               onTap: () {
                 Navigator.pop(context);
                 _pickImage(surveyId, ImageSource.gallery);
@@ -793,6 +832,19 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
         ),
       ),
     );
+  }
+
+  String _getTileUrl(MapLayerType layer) {
+    switch (layer) {
+      case MapLayerType.normal:
+        return MapConstants.osmTileUrl;
+      case MapLayerType.satellite:
+        // Esri World Imagery
+        return 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+      case MapLayerType.terrain:
+        // OpenTopoMap
+        return 'https://tile.opentopomap.org/{z}/{x}/{y}.png';
+    }
   }
 }
 

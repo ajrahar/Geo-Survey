@@ -12,6 +12,7 @@ import 'package:geosurvey/features/map/presentation/widgets/polygon_layer_widget
 import 'package:geosurvey/features/map/presentation/widgets/drawing_toolbar.dart';
 import 'package:geosurvey/features/map/presentation/widgets/info_panel.dart';
 import 'package:geosurvey/features/map/presentation/widgets/layer_selector_widget.dart';
+import 'package:geosurvey/core/localization/l10n/app_localizations.dart';
 
 class MapPage extends ConsumerStatefulWidget {
   const MapPage({super.key});
@@ -33,14 +34,15 @@ class _MapPageState extends ConsumerState<MapPage> {
   @override
   Widget build(BuildContext context) {
     final drawingState = ref.watch(drawingStateProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Peta Survey'),
+        title: Text(l10n.mapTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.download),
-            tooltip: 'Download Peta Offline',
+            tooltip: l10n.downloadOfflineMap,
             onPressed: () {
               Navigator.push(
                 context,
@@ -93,46 +95,7 @@ class _MapPageState extends ConsumerState<MapPage> {
             ],
           ),
 
-          // Zoom Controls
-          if (!drawingState.isDrawing &&
-              drawingState.mode != DrawingMode.complete)
-            Positioned(
-              right: 16,
-              bottom: 120,
-              child: Column(
-                children: [
-                  FloatingActionButton.small(
-                    heroTag: 'zoom_in',
-                    onPressed: () {
-                      final currentZoom = _mapController.camera.zoom;
-                      _mapController.move(
-                        _mapController.camera.center,
-                        currentZoom + 1,
-                      );
-                    },
-                    backgroundColor: AppColors.surface,
-                    foregroundColor: AppColors.primary,
-                    child: const Icon(Icons.add),
-                  ),
-                  const SizedBox(height: 8),
-                  FloatingActionButton.small(
-                    heroTag: 'zoom_out',
-                    onPressed: () {
-                      final currentZoom = _mapController.camera.zoom;
-                      _mapController.move(
-                        _mapController.camera.center,
-                        currentZoom - 1,
-                      );
-                    },
-                    backgroundColor: AppColors.surface,
-                    foregroundColor: AppColors.primary,
-                    child: const Icon(Icons.remove),
-                  ),
-                ],
-              ),
-            ),
-
-          // Info Panel
+          // Info Panel (Has right margin to avoid Layer Selector)
           const InfoPanel(),
 
           // Layer Selector
@@ -152,13 +115,14 @@ class _MapPageState extends ConsumerState<MapPage> {
             ),
 
           // Drawing Toolbar
-          DrawingToolbar(onSave: () => _showSaveDialog()),
+          DrawingToolbar(onSave: () => _showSaveDialog(l10n)),
         ],
       ),
       floatingActionButton:
           !drawingState.isDrawing && drawingState.mode != DrawingMode.complete
           ? Column(
               mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 FloatingActionButton.extended(
                   heroTag: 'measure',
@@ -168,31 +132,28 @@ class _MapPageState extends ConsumerState<MapPage> {
                   backgroundColor: AppColors.surface,
                   foregroundColor: AppColors.primary,
                   icon: const Icon(Icons.straighten),
-                  label: const Text('Ukur Jarak'),
+                  label: Text(l10n.measureDistance),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12), // Reduced spacing slightly
                 FloatingActionButton.extended(
                   heroTag: 'gps_track',
                   onPressed: () {
                     ref.read(drawingStateProvider.notifier).startGpsTracking();
-                    TopNotification.showInfo(
-                      context,
-                      'Berjalanlah untuk merekam area',
-                    );
+                    TopNotification.showInfo(context, l10n.gpsWalkInstruction);
                   },
                   backgroundColor: AppColors.surface,
                   foregroundColor: AppColors.primary,
                   icon: const Icon(Icons.directions_walk),
-                  label: const Text('Rekam GPS'),
+                  label: Text(l10n.gpsRecord),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 FloatingActionButton.extended(
                   heroTag: 'draw',
                   onPressed: () {
                     ref.read(drawingStateProvider.notifier).startDrawing();
                   },
                   icon: const Icon(Icons.edit_location_alt),
-                  label: const Text('Mulai Gambar'),
+                  label: Text(l10n.startDrawing),
                 ),
               ],
             )
@@ -202,6 +163,7 @@ class _MapPageState extends ConsumerState<MapPage> {
 
   void _handleMapTap(point) {
     final drawingState = ref.read(drawingStateProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     // If in drag mode and a vertex is selected, move it to tapped location
     if (drawingState.mode == DrawingMode.dragVertex &&
@@ -211,7 +173,7 @@ class _MapPageState extends ConsumerState<MapPage> {
           .updateVertex(drawingState.selectedVertexIndex!, point);
       ref.read(drawingStateProvider.notifier).deselectVertex();
 
-      TopNotification.showSuccess(context, 'Titik berhasil dipindahkan');
+      TopNotification.showSuccess(context, l10n.pointMoved);
     }
     // Only add vertex if in add point mode
     else if (drawingState.mode == DrawingMode.addPoint) {
@@ -219,14 +181,11 @@ class _MapPageState extends ConsumerState<MapPage> {
     }
   }
 
-  void _showSaveDialog() {
+  void _showSaveDialog(AppLocalizations l10n) {
     final drawingState = ref.read(drawingStateProvider);
 
     if (!drawingState.canComplete) {
-      TopNotification.showError(
-        context,
-        'Minimal 3 titik untuk menyimpan polygon',
-      );
+      TopNotification.showError(context, l10n.minPointsError);
       return;
     }
 
@@ -235,32 +194,35 @@ class _MapPageState extends ConsumerState<MapPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Simpan Survey'),
+        title: Text(l10n.saveSurveyTitle),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Nama Survey',
-                hintText: 'Contoh: Lahan Sawah A',
+              decoration: InputDecoration(
+                labelText: l10n.surveyName,
+                hintText: l10n.surveyNameHint,
               ),
               autofocus: true,
             ),
             const SizedBox(height: 16),
-            Text('Statistik:', style: Theme.of(context).textTheme.titleSmall),
+            Text(
+              l10n.statistics,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
             const SizedBox(height: 8),
             _InfoRow(
-              label: 'Jumlah Titik',
+              label: l10n.pointCount,
               value: '${drawingState.vertices.length}',
             ),
             _InfoRow(
-              label: 'Luas Area',
+              label: l10n.areaSize,
               value: '${drawingState.area.toStringAsFixed(2)} m²',
             ),
             _InfoRow(
-              label: 'Keliling',
+              label: l10n.perimeter,
               value: '${drawingState.perimeter.toStringAsFixed(2)} m',
             ),
           ],
@@ -268,16 +230,13 @@ class _MapPageState extends ConsumerState<MapPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
               final name = nameController.text.trim();
               if (name.isEmpty) {
-                TopNotification.showError(
-                  context,
-                  'Nama survey tidak boleh kosong',
-                );
+                TopNotification.showError(context, l10n.surveyNameError);
                 return;
               }
 
@@ -299,10 +258,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                   Navigator.pop(context); // Close dialog
                   ref.read(drawingStateProvider.notifier).cancelDrawing();
 
-                  TopNotification.showSuccess(
-                    context,
-                    'Survey "$name" berhasil disimpan!',
-                  );
+                  TopNotification.showSuccess(context, l10n.saveSuccess(name));
 
                   // Navigate back
                   Navigator.pop(context);
@@ -313,7 +269,7 @@ class _MapPageState extends ConsumerState<MapPage> {
                 }
               }
             },
-            child: const Text('Simpan'),
+            child: Text(l10n.save),
           ),
         ],
       ),

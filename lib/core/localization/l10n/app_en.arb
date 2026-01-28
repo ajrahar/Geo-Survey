@@ -36,5 +36,101 @@
         "type": "String"
       }
     }
+  },
+  "mapModeView": "View Mode",
+  "mapModeInstruction": "Tap \"Start Drawing\" to create a polygon",
+  "measureDistance": "Measure Distance",
+  "polygonStatistics": "Polygon Statistics",
+  "totalDistance": "Total Distance",
+  "measureInstruction": "Tap 2 points to measure distance",
+  "polygonInstruction": "Minimum 3 points to create a polygon",
+  "downloadOfflineMap": "Download Offline Map",
+  "startDrawing": "Start Drawing",
+  "gpsRecord": "GPS Record",
+  "gpsWalkInstruction": "Walk to record the area",
+  "saveSurvey": "Save Survey",
+  "saveSurveyTitle": "Save Survey",
+  "pointMoved": "Point moved successfully",
+  "minPointsError": "Minimum 3 points required to save polygon",
+  "surveyDetail": "Survey Detail",
+  "dateCreated": "Date Created",
+  "address": "Address",
+  "fetchAddress": "Tap to fetch address from coordinates",
+  "fetchingAddress": "Fetching address...",
+  "photoDocumentation": "Photo Documentation",
+  "addPhoto": "Add Photo",
+  "noPhotos": "No documentation photos yet",
+  "coordinates": "Coordinates",
+  "exportGeoJson": "Export GeoJSON",
+  "exportPng": "Export PNG Image",
+  "exportPdf": "Export PDF Report",
+  "camera": "Camera",
+  "gallery": "Gallery",
+  "photoAdded": "Photo added successfully",
+  "photoDeleted": "Photo deleted",
+  "deletePhotoError": "Failed to delete photo: {error}",
+  "@deletePhotoError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addPhotoError": "Failed to add photo: {error}",
+  "@addPhotoError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "surveyHistoryTitle": "Survey History",
+  "noSurveys": "No surveys yet",
+  "createSurveyInstruction": "Tap + to create a new survey",
+  "deleteSurveyTitle": "Delete Survey?",
+  "deleteSurveyContent": "Survey \"{name}\" will be permanently deleted.",
+  "@deleteSurveyContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "delete": "Delete",
+  "deleteSuccess": "Survey deleted successfully",
+  "cameraOption": "Take Photo (Camera)",
+  "galleryOption": "Choose from Gallery",
+  "exportGeoJsonSubtitle": "Standard GIS format",
+  "exportPngSubtitle": "Map screenshot as image",
+  "exportPdfSubtitle": "Complete report with statistics",
+  "capturingScreenshot": "Capturing screenshot...",
+  "generatingPdf": "Generating PDF report...",
+  "exportSuccess": "{type} exported successfully!",
+  "@exportSuccess": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "exportError": "Failed to export {type}: {error}",
+  "@exportError": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addressFromCoords": "Address (from coords)",
+  "pointCountValue": "{count} points",
+  "@pointCountValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

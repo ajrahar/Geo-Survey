@@ -36,5 +36,101 @@
         "type": "String"
       }
     }
+  },
+  "mapModeView": "Mode: Lihat Peta",
+  "mapModeInstruction": "Tap \"Mulai Gambar\" untuk membuat polygon",
+  "measureDistance": "Ukur Jarak",
+  "polygonStatistics": "Statistik Polygon",
+  "totalDistance": "Jarak Total",
+  "measureInstruction": "Tap 2 titik untuk mengukur jarak",
+  "polygonInstruction": "Minimal 3 titik untuk membuat polygon",
+  "downloadOfflineMap": "Download Peta Offline",
+  "startDrawing": "Mulai Gambar",
+  "gpsRecord": "Rekam GPS",
+  "gpsWalkInstruction": "Berjalanlah untuk merekam area",
+  "saveSurvey": "Simpan",
+  "saveSurveyTitle": "Simpan Survey",
+  "pointMoved": "Titik berhasil dipindahkan",
+  "minPointsError": "Minimal 3 titik untuk menyimpan polygon",
+  "surveyDetail": "Detail Survey",
+  "dateCreated": "Tanggal Dibuat",
+  "address": "Alamat",
+  "fetchAddress": "Tap untuk ambil alamat dari koordinat",
+  "fetchingAddress": "Mengambil alamat...",
+  "photoDocumentation": "Dokumentasi Foto",
+  "addPhoto": "Tambah Foto",
+  "noPhotos": "Belum ada foto dokumentasi",
+  "coordinates": "Koordinat Titik",
+  "exportGeoJson": "Export GeoJSON",
+  "exportPng": "Export PNG Image",
+  "exportPdf": "Export PDF Report",
+  "camera": "Kamera",
+  "gallery": "Galeri",
+  "photoAdded": "Foto berhasil ditambahkan",
+  "photoDeleted": "Foto dihapus",
+  "deletePhotoError": "Gagal menghapus foto: {error}",
+  "@deletePhotoError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addPhotoError": "Gagal menambahkan foto: {error}",
+  "@addPhotoError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "surveyHistoryTitle": "Riwayat Survey",
+  "noSurveys": "Belum ada survey",
+  "createSurveyInstruction": "Tap tombol + untuk membuat survey baru",
+  "deleteSurveyTitle": "Hapus Survey?",
+  "deleteSurveyContent": "Survey \"{name}\" akan dihapus permanen.",
+  "@deleteSurveyContent": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "delete": "Hapus",
+  "deleteSuccess": "Survey berhasil dihapus",
+  "cameraOption": "Ambil Foto (Kamera)",
+  "galleryOption": "Pilih dari Galeri",
+  "exportGeoJsonSubtitle": "Format standar untuk GIS",
+  "exportPngSubtitle": "Screenshot peta sebagai gambar",
+  "exportPdfSubtitle": "Laporan lengkap dengan statistik",
+  "capturingScreenshot": "Mengambil screenshot...",
+  "generatingPdf": "Membuat PDF report...",
+  "exportSuccess": "{type} berhasil di-export!",
+  "@exportSuccess": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      }
+    }
+  },
+  "exportError": "Gagal export {type}: {error}",
+  "@exportError": {
+    "placeholders": {
+      "type": {
+        "type": "String"
+      },
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "addressFromCoords": "Alamat (dari koordinat)",
+  "pointCountValue": "{count} titik",
+  "@pointCountValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

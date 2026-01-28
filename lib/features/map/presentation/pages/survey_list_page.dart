@@ -6,6 +6,7 @@ import 'package:geosurvey/core/widgets/top_notification.dart';
 import 'package:geosurvey/features/map/presentation/providers/database_providers.dart';
 import 'package:geosurvey/features/map/presentation/pages/survey_detail_page.dart';
 import 'package:intl/intl.dart';
+import 'package:geosurvey/core/localization/l10n/app_localizations.dart';
 
 class SurveyListPage extends ConsumerWidget {
   const SurveyListPage({super.key});
@@ -13,9 +14,10 @@ class SurveyListPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final surveyListAsync = ref.watch(surveyListProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Riwayat Survey')),
+      appBar: AppBar(title: Text(l10n.surveyHistoryTitle)),
       body: surveyListAsync.when(
         data: (surveys) {
           if (surveys.isEmpty) {
@@ -30,14 +32,14 @@ class SurveyListPage extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Belum ada survey',
+                    l10n.noSurveys,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: AppColors.textSecondary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Tap tombol + untuk membuat survey baru',
+                    l10n.createSurveyInstruction,
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],
@@ -81,6 +83,7 @@ class _SurveyCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final dateFormat = DateFormat('dd MMM yyyy, HH:mm');
 
     return Card(
@@ -154,7 +157,7 @@ class _SurveyCard extends ConsumerWidget {
                   Expanded(
                     child: _StatItem(
                       icon: Icons.crop_square,
-                      label: 'Luas',
+                      label: l10n.areaSize,
                       value: GeoCalculator.formatArea(survey.areaSize),
                     ),
                   ),
@@ -162,7 +165,7 @@ class _SurveyCard extends ConsumerWidget {
                   Expanded(
                     child: _StatItem(
                       icon: Icons.straighten,
-                      label: 'Keliling',
+                      label: l10n.perimeter,
                       value: GeoCalculator.formatDistance(survey.perimeter),
                     ),
                   ),
@@ -176,15 +179,17 @@ class _SurveyCard extends ConsumerWidget {
   }
 
   void _showDeleteConfirmation(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Hapus Survey?'),
-        content: Text('Survey "${survey.name}" akan dihapus permanen.'),
+        title: Text(l10n.deleteSurveyTitle),
+        content: Text(l10n.deleteSurveyContent(survey.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Batal'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () async {
@@ -193,11 +198,11 @@ class _SurveyCard extends ConsumerWidget {
 
               if (context.mounted) {
                 Navigator.pop(context);
-                TopNotification.showSuccess(context, 'Survey berhasil dihapus');
+                TopNotification.showSuccess(context, l10n.deleteSuccess);
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
-            child: const Text('Hapus'),
+            child: Text(l10n.delete),
           ),
         ],
       ),

@@ -81,4 +81,169 @@ class AppLocalizationsEn extends AppLocalizations {
   String importError(String error) {
     return 'Import failed: $error';
   }
+
+  @override
+  String get mapModeView => 'View Mode';
+
+  @override
+  String get mapModeInstruction => 'Tap \"Start Drawing\" to create a polygon';
+
+  @override
+  String get measureDistance => 'Measure Distance';
+
+  @override
+  String get polygonStatistics => 'Polygon Statistics';
+
+  @override
+  String get totalDistance => 'Total Distance';
+
+  @override
+  String get measureInstruction => 'Tap 2 points to measure distance';
+
+  @override
+  String get polygonInstruction => 'Minimum 3 points to create a polygon';
+
+  @override
+  String get downloadOfflineMap => 'Download Offline Map';
+
+  @override
+  String get startDrawing => 'Start Drawing';
+
+  @override
+  String get gpsRecord => 'GPS Record';
+
+  @override
+  String get gpsWalkInstruction => 'Walk to record the area';
+
+  @override
+  String get saveSurvey => 'Save Survey';
+
+  @override
+  String get saveSurveyTitle => 'Save Survey';
+
+  @override
+  String get pointMoved => 'Point moved successfully';
+
+  @override
+  String get minPointsError => 'Minimum 3 points required to save polygon';
+
+  @override
+  String get surveyDetail => 'Survey Detail';
+
+  @override
+  String get dateCreated => 'Date Created';
+
+  @override
+  String get address => 'Address';
+
+  @override
+  String get fetchAddress => 'Tap to fetch address from coordinates';
+
+  @override
+  String get fetchingAddress => 'Fetching address...';
+
+  @override
+  String get photoDocumentation => 'Photo Documentation';
+
+  @override
+  String get addPhoto => 'Add Photo';
+
+  @override
+  String get noPhotos => 'No documentation photos yet';
+
+  @override
+  String get coordinates => 'Coordinates';
+
+  @override
+  String get exportGeoJson => 'Export GeoJSON';
+
+  @override
+  String get exportPng => 'Export PNG Image';
+
+  @override
+  String get exportPdf => 'Export PDF Report';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get photoAdded => 'Photo added successfully';
+
+  @override
+  String get photoDeleted => 'Photo deleted';
+
+  @override
+  String deletePhotoError(String error) {
+    return 'Failed to delete photo: $error';
+  }
+
+  @override
+  String addPhotoError(String error) {
+    return 'Failed to add photo: $error';
+  }
+
+  @override
+  String get surveyHistoryTitle => 'Survey History';
+
+  @override
+  String get noSurveys => 'No surveys yet';
+
+  @override
+  String get createSurveyInstruction => 'Tap + to create a new survey';
+
+  @override
+  String get deleteSurveyTitle => 'Delete Survey?';
+
+  @override
+  String deleteSurveyContent(String name) {
+    return 'Survey \"$name\" will be permanently deleted.';
+  }
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get deleteSuccess => 'Survey deleted successfully';
+
+  @override
+  String get cameraOption => 'Take Photo (Camera)';
+
+  @override
+  String get galleryOption => 'Choose from Gallery';
+
+  @override
+  String get exportGeoJsonSubtitle => 'Standard GIS format';
+
+  @override
+  String get exportPngSubtitle => 'Map screenshot as image';
+
+  @override
+  String get exportPdfSubtitle => 'Complete report with statistics';
+
+  @override
+  String get capturingScreenshot => 'Capturing screenshot...';
+
+  @override
+  String get generatingPdf => 'Generating PDF report...';
+
+  @override
+  String exportSuccess(String type) {
+    return '$type exported successfully!';
+  }
+
+  @override
+  String exportError(String type, String error) {
+    return 'Failed to export $type: $error';
+  }
+
+  @override
+  String get addressFromCoords => 'Address (from coords)';
+
+  @override
+  String pointCountValue(int count) {
+    return '$count points';
+  }
 }

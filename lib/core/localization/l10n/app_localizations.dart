@@ -235,6 +235,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Import failed: {error}'**
   String importError(String error);
+
+  /// No description provided for @mapModeView.
+  ///
+  /// In en, this message translates to:
+  /// **'View Mode'**
+  String get mapModeView;
+
+  /// No description provided for @mapModeInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap \"Start Drawing\" to create a polygon'**
+  String get mapModeInstruction;
+
+  /// No description provided for @measureDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Measure Distance'**
+  String get measureDistance;
+
+  /// No description provided for @polygonStatistics.
+  ///
+  /// In en, this message translates to:
+  /// **'Polygon Statistics'**
+  String get polygonStatistics;
+
+  /// No description provided for @totalDistance.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Distance'**
+  String get totalDistance;
+
+  /// No description provided for @measureInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap 2 points to measure distance'**
+  String get measureInstruction;
+
+  /// No description provided for @polygonInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum 3 points to create a polygon'**
+  String get polygonInstruction;
+
+  /// No description provided for @downloadOfflineMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Download Offline Map'**
+  String get downloadOfflineMap;
+
+  /// No description provided for @startDrawing.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Drawing'**
+  String get startDrawing;
+
+  /// No description provided for @gpsRecord.
+  ///
+  /// In en, this message translates to:
+  /// **'GPS Record'**
+  String get gpsRecord;
+
+  /// No description provided for @gpsWalkInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Walk to record the area'**
+  String get gpsWalkInstruction;
+
+  /// No description provided for @saveSurvey.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Survey'**
+  String get saveSurvey;
+
+  /// No description provided for @saveSurveyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Survey'**
+  String get saveSurveyTitle;
+
+  /// No description provided for @pointMoved.
+  ///
+  /// In en, this message translates to:
+  /// **'Point moved successfully'**
+  String get pointMoved;
+
+  /// No description provided for @minPointsError.
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum 3 points required to save polygon'**
+  String get minPointsError;
+
+  /// No description provided for @surveyDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'Survey Detail'**
+  String get surveyDetail;
+
+  /// No description provided for @dateCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Date Created'**
+  String get dateCreated;
+
+  /// No description provided for @address.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get address;
+
+  /// No description provided for @fetchAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to fetch address from coordinates'**
+  String get fetchAddress;
+
+  /// No description provided for @fetchingAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Fetching address...'**
+  String get fetchingAddress;
+
+  /// No description provided for @photoDocumentation.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo Documentation'**
+  String get photoDocumentation;
+
+  /// No description provided for @addPhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Photo'**
+  String get addPhoto;
+
+  /// No description provided for @noPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'No documentation photos yet'**
+  String get noPhotos;
+
+  /// No description provided for @coordinates.
+  ///
+  /// In en, this message translates to:
+  /// **'Coordinates'**
+  String get coordinates;
+
+  /// No description provided for @exportGeoJson.
+  ///
+  /// In en, this message translates to:
+  /// **'Export GeoJSON'**
+  String get exportGeoJson;
+
+  /// No description provided for @exportPng.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PNG Image'**
+  String get exportPng;
+
+  /// No description provided for @exportPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Export PDF Report'**
+  String get exportPdf;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @gallery.
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// No description provided for @photoAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo added successfully'**
+  String get photoAdded;
+
+  /// No description provided for @photoDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Photo deleted'**
+  String get photoDeleted;
+
+  /// No description provided for @deletePhotoError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete photo: {error}'**
+  String deletePhotoError(String error);
+
+  /// No description provided for @addPhotoError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to add photo: {error}'**
+  String addPhotoError(String error);
+
+  /// No description provided for @surveyHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Survey History'**
+  String get surveyHistoryTitle;
+
+  /// No description provided for @noSurveys.
+  ///
+  /// In en, this message translates to:
+  /// **'No surveys yet'**
+  String get noSurveys;
+
+  /// No description provided for @createSurveyInstruction.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap + to create a new survey'**
+  String get createSurveyInstruction;
+
+  /// No description provided for @deleteSurveyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Survey?'**
+  String get deleteSurveyTitle;
+
+  /// No description provided for @deleteSurveyContent.
+  ///
+  /// In en, this message translates to:
+  /// **'Survey \"{name}\" will be permanently deleted.'**
+  String deleteSurveyContent(String name);
+
+  /// No description provided for @delete.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// No description provided for @deleteSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Survey deleted successfully'**
+  String get deleteSuccess;
+
+  /// No description provided for @cameraOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Take Photo (Camera)'**
+  String get cameraOption;
+
+  /// No description provided for @galleryOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose from Gallery'**
+  String get galleryOption;
+
+  /// No description provided for @exportGeoJsonSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Standard GIS format'**
+  String get exportGeoJsonSubtitle;
+
+  /// No description provided for @exportPngSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Map screenshot as image'**
+  String get exportPngSubtitle;
+
+  /// No description provided for @exportPdfSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete report with statistics'**
+  String get exportPdfSubtitle;
+
+  /// No description provided for @capturingScreenshot.
+  ///
+  /// In en, this message translates to:
+  /// **'Capturing screenshot...'**
+  String get capturingScreenshot;
+
+  /// No description provided for @generatingPdf.
+  ///
+  /// In en, this message translates to:
+  /// **'Generating PDF report...'**
+  String get generatingPdf;
+
+  /// No description provided for @exportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'{type} exported successfully!'**
+  String exportSuccess(String type);
+
+  /// No description provided for @exportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to export {type}: {error}'**
+  String exportError(String type, String error);
+
+  /// No description provided for @addressFromCoords.
+  ///
+  /// In en, this message translates to:
+  /// **'Address (from coords)'**
+  String get addressFromCoords;
+
+  /// No description provided for @pointCountValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} points'**
+  String pointCountValue(int count);
 }
 
 class _AppLocalizationsDelegate

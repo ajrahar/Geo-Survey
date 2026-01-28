@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geosurvey/core/theme/app_colors.dart';
 import 'package:geosurvey/core/utils/geo_calculator.dart';
 import 'package:geosurvey/features/map/presentation/providers/drawing_state_provider.dart';
+import 'package:geosurvey/core/localization/l10n/app_localizations.dart';
 
 /// Floating info panel showing polygon statistics
 class InfoPanel extends ConsumerWidget {
@@ -11,6 +12,7 @@ class InfoPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final drawingState = ref.watch(drawingStateProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     if (!drawingState.isDrawing &&
         drawingState.mode != DrawingMode.complete &&
@@ -18,7 +20,7 @@ class InfoPanel extends ConsumerWidget {
       return Positioned(
         top: 16,
         left: 16,
-        right: 16,
+        right: 72, // Modified to avoid overlap with Layer Selector
         child: Card(
           child: Padding(
             padding: const EdgeInsets.all(12),
@@ -35,14 +37,14 @@ class InfoPanel extends ConsumerWidget {
                     ),
                     const SizedBox(width: 8),
                     Text(
-                      'Mode: Lihat Peta',
+                      l10n.mapModeView,
                       style: Theme.of(context).textTheme.titleSmall,
                     ),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Tap tombol "Mulai Gambar" untuk membuat polygon',
+                  l10n.mapModeInstruction,
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -56,7 +58,7 @@ class InfoPanel extends ConsumerWidget {
     return Positioned(
       top: 16,
       left: 16,
-      right: 16,
+      right: 72, // Modified to avoid overlap with Layer Selector
       child: Card(
         color: AppColors.primary,
         child: Padding(
@@ -75,8 +77,8 @@ class InfoPanel extends ConsumerWidget {
                   const SizedBox(width: 8),
                   Text(
                     drawingState.mode == DrawingMode.measure
-                        ? 'Pengukuran Jarak'
-                        : 'Statistik Polygon',
+                        ? l10n.measureDistance
+                        : l10n.polygonStatistics,
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -89,7 +91,7 @@ class InfoPanel extends ConsumerWidget {
               // Vertices count (Common)
               _StatRow(
                 icon: Icons.location_on,
-                label: 'Jumlah Titik',
+                label: l10n.pointCount,
                 value: '${drawingState.vertices.length}',
               ),
 
@@ -99,7 +101,7 @@ class InfoPanel extends ConsumerWidget {
               if (drawingState.mode == DrawingMode.measure) ...[
                 _StatRow(
                   icon: Icons.straighten,
-                  label: 'Jarak Total',
+                  label: l10n.totalDistance,
                   value: GeoCalculator.formatDistance(drawingState.perimeter),
                 ),
 
@@ -107,7 +109,7 @@ class InfoPanel extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 8),
                     child: Text(
-                      'Tap 2 titik untuk mengukur jarak',
+                      l10n.measureInstruction,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: Colors.white70,
                         fontStyle: FontStyle.italic,
@@ -121,7 +123,7 @@ class InfoPanel extends ConsumerWidget {
                   drawingState.vertices.length >= 3) ...[
                 _StatRow(
                   icon: Icons.crop_square,
-                  label: 'Luas Area',
+                  label: l10n.areaSize,
                   value: GeoCalculator.formatArea(drawingState.area),
                 ),
                 const SizedBox(height: 8),
@@ -129,7 +131,7 @@ class InfoPanel extends ConsumerWidget {
                 // Perimeter
                 _StatRow(
                   icon: Icons.straighten,
-                  label: 'Keliling',
+                  label: l10n.perimeter,
                   value: GeoCalculator.formatDistance(drawingState.perimeter),
                 ),
               ],
@@ -140,7 +142,7 @@ class InfoPanel extends ConsumerWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(
-                    'Minimal 3 titik untuk membuat polygon',
+                    l10n.polygonInstruction,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
                       color: Colors.white70,
                       fontStyle: FontStyle.italic,
