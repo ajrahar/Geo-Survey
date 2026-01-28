@@ -1,0 +1,30 @@
+{
+  "@@locale": "id",
+  "appTitle": "Geo Survey",
+  "settingsTitle": "Pengaturan",
+  "languageTitle": "Bahasa",
+  "selectLanguage": "Pilih Bahasa",
+  "projectListTitle": "Geo Survey",
+  "startNewSurvey": "Mulai Survey Baru",
+  "viewSurveyHistory": "Riwayat Survey",
+  "welcomeMessage": "Selamat Datang di Geo Survey",
+  "welcomeSubtitle": "Aplikasi pemetaan lahan offline untuk surveyor profesional",
+  "mapTitle": "Peta Survey",
+  "save": "Simpan",
+  "cancel": "Batal",
+  "surveyName": "Nama Survey",
+  "surveyNameHint": "Contoh: Lahan Sawah A",
+  "surveyNameError": "Nama survey tidak boleh kosong",
+  "saveSuccess": "Survey \"{name}\" berhasil disimpan!",
+  "@saveSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "statistics": "Statistik",
+  "pointCount": "Jumlah Titik",
+  "areaSize": "Luas Area",
+  "perimeter": "Keliling"
+}

@@ -10,6 +10,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # UI
   cupertino_icons: ^1.0.8
@@ -36,11 +38,12 @@ dependencies:
   freezed_annotation: ^2.4.4
 
   # Utilities
-  intl: ^0.19.0
+  intl: ^0.20.2
   uuid: ^4.5.1
   share_plus: ^10.1.2
   permission_handler: ^11.3.1
   path_provider: ^2.1.5
+  shared_preferences: ^2.3.2
   pdf: ^3.11.1
   screenshot: ^3.0.0
   http: ^1.2.0
@@ -52,13 +55,6 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^5.0.0
 
-flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: "assets/icon/app_icon.png"
-  min_sdk_android: 21
-  remove_alpha_ios: true
-
   # Code Generation
   build_runner: ^2.4.13
   drift_dev: ^2.20.3
@@ -66,8 +62,18 @@ flutter_launcher_icons:
   json_serializable: ^6.8.0
   freezed: ^2.5.7
 
+flutter_launcher_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/app_icon.png"
+  min_sdk_android: 21
+  remove_alpha_ios: true
+
+
+
 flutter:
   uses-material-design: true
+  generate: true
 
   # Assets
   assets:

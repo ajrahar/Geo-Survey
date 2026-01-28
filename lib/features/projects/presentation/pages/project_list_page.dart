@@ -3,23 +3,37 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geosurvey/core/theme/app_colors.dart';
 import 'package:geosurvey/features/map/presentation/pages/map_page.dart';
 import 'package:geosurvey/features/map/presentation/pages/survey_list_page.dart';
+import 'package:geosurvey/features/settings/presentation/pages/settings_page.dart';
+import 'package:geosurvey/core/localization/l10n/app_localizations.dart';
 
 class ProjectListPage extends ConsumerWidget {
   const ProjectListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Geo Survey'),
+        title: Text(l10n.appTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.history),
-            tooltip: 'Riwayat Survey',
+            tooltip: l10n.viewSurveyHistory,
             onPressed: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const SurveyListPage()),
+              );
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            tooltip: l10n.settingsTitle,
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
               );
             },
           ),
@@ -38,13 +52,13 @@ class ProjectListPage extends ConsumerWidget {
               ),
               const SizedBox(height: 24),
               Text(
-                'Selamat Datang di Geo Survey',
+                l10n.welcomeMessage,
                 style: Theme.of(context).textTheme.headlineSmall,
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
               Text(
-                'Aplikasi pemetaan lahan offline untuk surveyor profesional',
+                l10n.welcomeSubtitle,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -59,7 +73,7 @@ class ProjectListPage extends ConsumerWidget {
                   );
                 },
                 icon: const Icon(Icons.add_location_alt),
-                label: const Text('Mulai Survey Baru'),
+                label: Text(l10n.startNewSurvey),
                 style: ElevatedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
@@ -78,7 +92,7 @@ class ProjectListPage extends ConsumerWidget {
                   );
                 },
                 icon: const Icon(Icons.folder_open),
-                label: const Text('Lihat Riwayat Survey'),
+                label: Text(l10n.viewSurveyHistory),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,

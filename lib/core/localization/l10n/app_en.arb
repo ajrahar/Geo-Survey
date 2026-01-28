@@ -1,0 +1,30 @@
+{
+  "@@locale": "en",
+  "appTitle": "Geo Survey",
+  "settingsTitle": "Settings",
+  "languageTitle": "Language",
+  "selectLanguage": "Select Language",
+  "projectListTitle": "Geo Survey",
+  "startNewSurvey": "Start New Survey",
+  "viewSurveyHistory": "View Survey History",
+  "welcomeMessage": "Welcome to Geo Survey",
+  "welcomeSubtitle": "Offline land mapping app for professional surveyors",
+  "mapTitle": "Survey Map",
+  "save": "Save",
+  "cancel": "Cancel",
+  "surveyName": "Survey Name",
+  "surveyNameHint": "Example: Rice Field A",
+  "surveyNameError": "Survey name cannot be empty",
+  "saveSuccess": "Survey \"{name}\" saved successfully!",
+  "@saveSuccess": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "statistics": "Statistics",
+  "pointCount": "Point Count",
+  "areaSize": "Area Size",
+  "perimeter": "Perimeter"
+}
