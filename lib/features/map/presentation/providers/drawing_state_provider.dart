@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+import 'dart:async';
+import 'package:geolocator/geolocator.dart';
+import 'package:geosurvey/core/utils/gps_tracker_service.dart';
 import 'package:geosurvey/core/utils/geo_calculator.dart';
 
 /// Drawing mode states
@@ -8,6 +11,8 @@ enum DrawingMode {
   addPoint, // Tap to add vertices
   dragVertex, // Drag existing vertices
   complete, // Polygon completed
+  measure, // Ruler tool
+  gpsTrack, // Walk-to-draw
 }
 
 /// Drawing state model
@@ -52,14 +57,69 @@ class DrawingState {
 class DrawingStateNotifier extends StateNotifier<DrawingState> {
   DrawingStateNotifier() : super(const DrawingState());
 
+  StreamSubscription<Position>? _positionSubscription;
+
+  @override
+  void dispose() {
+    _positionSubscription?.cancel();
+    super.dispose();
+  }
+
   /// Start drawing mode
   void startDrawing() {
     state = const DrawingState(mode: DrawingMode.addPoint);
   }
 
+  /// Start GPS tracking (Walk-to-draw)
+  Future<bool> startGpsTracking() async {
+    final hasPermission = await GpsTrackerService.handlePermissions();
+    if (!hasPermission) return false;
+
+    state = const DrawingState(mode: DrawingMode.gpsTrack);
+
+    _positionSubscription?.cancel();
+    _positionSubscription = GpsTrackerService.getPositionStream().listen((
+      position,
+    ) {
+      final point = LatLng(position.latitude, position.longitude);
+
+      // Filter noise: Minimum 2 meters from last point
+      if (state.vertices.isNotEmpty) {
+        const distance = Distance();
+        final lastPoint = state.vertices.last;
+        if (distance.as(LengthUnit.Meter, lastPoint, point) < 2) {
+          return;
+        }
+      }
+
+      addVertex(point);
+    });
+
+    return true;
+  }
+
+  /// Stop GPS tracking
+  void stopGpsTracking() {
+    _positionSubscription?.cancel();
+    _positionSubscription = null;
+    // Switch to manual add mode so user can refine or complete
+    if (state.mode == DrawingMode.gpsTrack) {
+      state = state.copyWith(mode: DrawingMode.addPoint);
+    }
+  }
+
+  /// Start measurement mode
+  void startMeasurement() {
+    state = const DrawingState(mode: DrawingMode.measure);
+  }
+
   /// Add a vertex at the tapped location
   void addVertex(LatLng point) {
-    if (state.mode != DrawingMode.addPoint) return;
+    if (state.mode != DrawingMode.addPoint &&
+        state.mode != DrawingMode.measure &&
+        state.mode != DrawingMode.gpsTrack) {
+      return;
+    }
 
     final newVertices = [...state.vertices, point];
     _updateStateWithCalculations(newVertices);
@@ -96,6 +156,8 @@ class DrawingStateNotifier extends StateNotifier<DrawingState> {
 
   /// Cancel drawing and reset
   void cancelDrawing() {
+    _positionSubscription?.cancel();
+    _positionSubscription = null;
     state = const DrawingState();
   }
 
@@ -129,7 +191,12 @@ class DrawingStateNotifier extends StateNotifier<DrawingState> {
     double area = 0.0;
     double perimeter = 0.0;
 
-    if (vertices.length >= 3) {
+    if (state.mode == DrawingMode.measure) {
+      // In measure mode, just calculate distance between points (perimeter)
+      if (vertices.length >= 2) {
+        perimeter = GeoCalculator.calculatePerimeter(vertices);
+      }
+    } else if (vertices.length >= 3) {
       area = GeoCalculator.calculateArea(vertices);
       perimeter = GeoCalculator.calculatePerimeter(vertices);
     }

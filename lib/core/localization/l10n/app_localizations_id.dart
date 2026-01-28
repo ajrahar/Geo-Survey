@@ -70,4 +70,15 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get perimeter => 'Keliling';
+
+  @override
+  String get importSurvey => 'Import KML/GeoJSON';
+
+  @override
+  String get importSuccess => 'Import berhasil';
+
+  @override
+  String importError(String error) {
+    return 'Import gagal: $error';
+  }
 }

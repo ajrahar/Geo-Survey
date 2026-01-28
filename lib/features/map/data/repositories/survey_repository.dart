@@ -91,4 +91,23 @@ class SurveyRepository {
       return [];
     }
   }
+
+  // Photo Operations
+
+  Future<List<SurveyPhoto>> getPhotos(String surveyId) async {
+    return await _database.getPhotosBySurveyId(surveyId);
+  }
+
+  Future<void> addPhoto(String surveyId, String path) async {
+    final photo = SurveyPhotosCompanion(
+      surveyId: Value(surveyId),
+      path: Value(path),
+      createdAt: Value(DateTime.now()),
+    );
+    await _database.insertSurveyPhoto(photo);
+  }
+
+  Future<void> deletePhoto(int id) async {
+    await _database.deleteSurveyPhoto(id);
+  }
 }

@@ -106,6 +106,15 @@ class DrawingToolbar extends ConsumerWidget {
                       onPressed: () => notifier.completePolygon(),
                     ),
 
+                  // Stop Tracking (only in gpsTrack mode)
+                  if (drawingState.mode == DrawingMode.gpsTrack)
+                    _ToolbarButton(
+                      icon: Icons.stop_circle,
+                      label: 'Stop Record',
+                      color: AppColors.error,
+                      onPressed: () => notifier.stopGpsTracking(),
+                    ),
+
                   // Save (when completed)
                   if (drawingState.mode == DrawingMode.complete)
                     _ToolbarButton(
@@ -139,6 +148,10 @@ class DrawingToolbar extends ConsumerWidget {
         return Icons.open_with;
       case DrawingMode.complete:
         return Icons.check_circle;
+      case DrawingMode.measure:
+        return Icons.straighten;
+      case DrawingMode.gpsTrack:
+        return Icons.directions_walk;
       default:
         return Icons.edit_location_alt;
     }
@@ -152,6 +165,10 @@ class DrawingToolbar extends ConsumerWidget {
         return 'Mode: Geser Titik';
       case DrawingMode.complete:
         return 'Polygon Selesai';
+      case DrawingMode.measure:
+        return 'Mode: Ukur Jarak';
+      case DrawingMode.gpsTrack:
+        return 'Merekam Posisi...';
       default:
         return 'Mode: Idle';
     }
@@ -188,10 +205,12 @@ class DrawingToolbar extends ConsumerWidget {
     BuildContext context,
     DrawingStateNotifier notifier,
   ) {
+    // If just measuring, no need for confirmation dialog if no points
+    // But for consistency let's just cancel
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Batalkan Drawing?'),
+        title: const Text('Batalkan?'),
         content: const Text('Semua progress akan hilang.'),
         actions: [
           TextButton(

@@ -26,5 +26,15 @@
   "statistics": "Statistik",
   "pointCount": "Jumlah Titik",
   "areaSize": "Luas Area",
-  "perimeter": "Keliling"
+  "perimeter": "Keliling",
+  "importSurvey": "Import KML/GeoJSON",
+  "importSuccess": "Import berhasil",
+  "importError": "Import gagal: {error}",
+  "@importError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

@@ -217,6 +217,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Perimeter'**
   String get perimeter;
+
+  /// No description provided for @importSurvey.
+  ///
+  /// In en, this message translates to:
+  /// **'Import KML/GeoJSON'**
+  String get importSurvey;
+
+  /// No description provided for @importSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Import successful'**
+  String get importSuccess;
+
+  /// No description provided for @importError.
+  ///
+  /// In en, this message translates to:
+  /// **'Import failed: {error}'**
+  String importError(String error);
 }
 
 class _AppLocalizationsDelegate

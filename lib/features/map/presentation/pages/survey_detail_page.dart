@@ -11,8 +11,10 @@ import 'package:geosurvey/core/utils/pdf_exporter.dart';
 import 'package:geosurvey/core/utils/geocoding_service.dart';
 import 'package:geosurvey/core/widgets/top_notification.dart';
 import 'package:geosurvey/features/map/presentation/providers/database_providers.dart';
+import 'package:geosurvey/core/database/app_database.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:screenshot/screenshot.dart';
 
 class SurveyDetailPage extends ConsumerStatefulWidget {
@@ -50,6 +52,50 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
         _fetchedAddress = address;
         _isLoadingAddress = false;
       });
+    }
+  }
+
+  Future<void> _pickImage(String surveyId, ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(source: source);
+
+      if (pickedFile == null) return;
+
+      // Save to app directory (using FileExporter helper)
+      final savedPath = await FileExporter.saveToFile(
+        content: '', // Not used for copy
+        filename: 'photo_${DateTime.now().millisecondsSinceEpoch}.jpg',
+      );
+
+      // Copy file content
+      await File(pickedFile.path).copy(savedPath);
+
+      // Save to database
+      await ref.read(surveyRepositoryProvider).addPhoto(surveyId, savedPath);
+
+      if (mounted) {
+        setState(() {}); // Refresh UI
+        TopNotification.showSuccess(context, 'Foto berhasil ditambahkan');
+      }
+    } catch (e) {
+      if (mounted) {
+        TopNotification.showError(context, 'Gagal menambahkan foto: $e');
+      }
+    }
+  }
+
+  Future<void> _deletePhoto(int photoId) async {
+    try {
+      await ref.read(surveyRepositoryProvider).deletePhoto(photoId);
+      if (mounted) {
+        setState(() {}); // Refresh UI
+        TopNotification.showSuccess(context, 'Foto dihapus');
+      }
+    } catch (e) {
+      if (mounted) {
+        TopNotification.showError(context, 'Gagal menghapus foto: $e');
+      }
     }
   }
 
@@ -323,6 +369,116 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
                           value: GeoCalculator.formatDistance(survey.perimeter),
                           valueColor: AppColors.primary,
                         ),
+                        const SizedBox(height: 12),
+
+                        const Divider(height: 32),
+
+                        // Photos Section
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Dokumentasi Foto',
+                              style: Theme.of(context).textTheme.titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            IconButton(
+                              onPressed: () =>
+                                  _showPhotoOptions(context, survey.id),
+                              icon: const Icon(
+                                Icons.add_a_photo,
+                                color: AppColors.primary,
+                              ),
+                              tooltip: 'Tambah Foto',
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+
+                        FutureBuilder<List<SurveyPhoto>>(
+                          future: repository.getPhotos(survey.id),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                              return Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.all(16),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade50,
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                    color: Colors.grey.shade200,
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Belum ada foto dokumentasi',
+                                  style: TextStyle(color: Colors.grey),
+                                  textAlign: TextAlign.center,
+                                ),
+                              );
+                            }
+
+                            final photos = snapshot.data!;
+                            return SizedBox(
+                              height: 120,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: photos.length,
+                                separatorBuilder: (context, index) =>
+                                    const SizedBox(width: 8),
+                                itemBuilder: (context, index) {
+                                  final photo = photos[index];
+                                  return Stack(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.file(
+                                          File(photo.path),
+                                          width: 120,
+                                          height: 120,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                                return Container(
+                                                  width: 120,
+                                                  height: 120,
+                                                  color: Colors.grey.shade200,
+                                                  child: const Icon(
+                                                    Icons.broken_image,
+                                                    color: Colors.grey,
+                                                  ),
+                                                );
+                                              },
+                                        ),
+                                      ),
+                                      Positioned(
+                                        top: 4,
+                                        right: 4,
+                                        child: GestureDetector(
+                                          onTap: () => _deletePhoto(photo.id),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(4),
+                                            decoration: BoxDecoration(
+                                              color: Colors.black.withValues(
+                                                alpha: 0.5,
+                                              ),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(
+                                              Icons.close,
+                                              size: 16,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                        ),
+
                         const SizedBox(height: 12),
 
                         const Divider(height: 32),
@@ -608,6 +764,35 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
         TopNotification.showError(context, 'Gagal export PDF: $e');
       }
     }
+  }
+
+  void _showPhotoOptions(BuildContext context, String surveyId) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('Ambil Foto (Kamera)'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(surveyId, ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library),
+              title: const Text('Pilih dari Galeri'),
+              onTap: () {
+                Navigator.pop(context);
+                _pickImage(surveyId, ImageSource.gallery);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

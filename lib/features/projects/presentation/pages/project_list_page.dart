@@ -5,6 +5,11 @@ import 'package:geosurvey/features/map/presentation/pages/map_page.dart';
 import 'package:geosurvey/features/map/presentation/pages/survey_list_page.dart';
 import 'package:geosurvey/features/settings/presentation/pages/settings_page.dart';
 import 'package:geosurvey/core/localization/l10n/app_localizations.dart';
+import 'package:geosurvey/core/utils/geo_calculator.dart';
+import 'package:geosurvey/core/widgets/top_notification.dart';
+import 'package:geosurvey/features/map/presentation/pages/survey_detail_page.dart';
+import 'package:geosurvey/features/map/presentation/providers/database_providers.dart';
+import 'package:geosurvey/features/projects/services/geo_import_service.dart';
 
 class ProjectListPage extends ConsumerWidget {
   const ProjectListPage({super.key});
@@ -100,10 +105,63 @@ class ProjectListPage extends ConsumerWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 16),
+              TextButton.icon(
+                onPressed: () => _importSurvey(context, ref, l10n),
+                icon: const Icon(Icons.file_upload),
+                label: Text(l10n.importSurvey),
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32,
+                    vertical: 16,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _importSurvey(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final importedData = await GeoImportService.pickAndImportFile();
+    if (importedData == null) return;
+
+    try {
+      final repository = ref.read(surveyRepositoryProvider);
+      final surveyId = DateTime.now().millisecondsSinceEpoch.toString();
+
+      final area = GeoCalculator.calculateArea(importedData.vertices);
+      final perimeter = GeoCalculator.calculatePerimeter(importedData.vertices);
+
+      await repository.saveSurvey(
+        id: surveyId,
+        name: importedData.name,
+        vertices: importedData.vertices,
+        areaSize: area,
+        perimeter: perimeter,
+      );
+
+      if (context.mounted) {
+        TopNotification.showSuccess(context, l10n.importSuccess);
+
+        // Navigate to details
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => SurveyDetailPage(surveyId: surveyId),
+          ),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        TopNotification.showError(context, l10n.importError(e.toString()));
+      }
+    }
   }
 }

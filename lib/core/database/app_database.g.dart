@@ -843,16 +843,332 @@ class SurveysCompanion extends UpdateCompanion<Survey> {
   }
 }
 
+class $SurveyPhotosTable extends SurveyPhotos
+    with TableInfo<$SurveyPhotosTable, SurveyPhoto> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $SurveyPhotosTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _surveyIdMeta = const VerificationMeta(
+    'surveyId',
+  );
+  @override
+  late final GeneratedColumn<String> surveyId = GeneratedColumn<String>(
+    'survey_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES surveys (id) ON DELETE CASCADE',
+    ),
+  );
+  static const VerificationMeta _pathMeta = const VerificationMeta('path');
+  @override
+  late final GeneratedColumn<String> path = GeneratedColumn<String>(
+    'path',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [id, surveyId, path, createdAt];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'survey_photos';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<SurveyPhoto> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('survey_id')) {
+      context.handle(
+        _surveyIdMeta,
+        surveyId.isAcceptableOrUnknown(data['survey_id']!, _surveyIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_surveyIdMeta);
+    }
+    if (data.containsKey('path')) {
+      context.handle(
+        _pathMeta,
+        path.isAcceptableOrUnknown(data['path']!, _pathMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_pathMeta);
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_createdAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  SurveyPhoto map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return SurveyPhoto(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      surveyId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}survey_id'],
+      )!,
+      path: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}path'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $SurveyPhotosTable createAlias(String alias) {
+    return $SurveyPhotosTable(attachedDatabase, alias);
+  }
+}
+
+class SurveyPhoto extends DataClass implements Insertable<SurveyPhoto> {
+  final int id;
+  final String surveyId;
+  final String path;
+  final DateTime createdAt;
+  const SurveyPhoto({
+    required this.id,
+    required this.surveyId,
+    required this.path,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['survey_id'] = Variable<String>(surveyId);
+    map['path'] = Variable<String>(path);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  SurveyPhotosCompanion toCompanion(bool nullToAbsent) {
+    return SurveyPhotosCompanion(
+      id: Value(id),
+      surveyId: Value(surveyId),
+      path: Value(path),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory SurveyPhoto.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return SurveyPhoto(
+      id: serializer.fromJson<int>(json['id']),
+      surveyId: serializer.fromJson<String>(json['surveyId']),
+      path: serializer.fromJson<String>(json['path']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'surveyId': serializer.toJson<String>(surveyId),
+      'path': serializer.toJson<String>(path),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  SurveyPhoto copyWith({
+    int? id,
+    String? surveyId,
+    String? path,
+    DateTime? createdAt,
+  }) => SurveyPhoto(
+    id: id ?? this.id,
+    surveyId: surveyId ?? this.surveyId,
+    path: path ?? this.path,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  SurveyPhoto copyWithCompanion(SurveyPhotosCompanion data) {
+    return SurveyPhoto(
+      id: data.id.present ? data.id.value : this.id,
+      surveyId: data.surveyId.present ? data.surveyId.value : this.surveyId,
+      path: data.path.present ? data.path.value : this.path,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SurveyPhoto(')
+          ..write('id: $id, ')
+          ..write('surveyId: $surveyId, ')
+          ..write('path: $path, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(id, surveyId, path, createdAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is SurveyPhoto &&
+          other.id == this.id &&
+          other.surveyId == this.surveyId &&
+          other.path == this.path &&
+          other.createdAt == this.createdAt);
+}
+
+class SurveyPhotosCompanion extends UpdateCompanion<SurveyPhoto> {
+  final Value<int> id;
+  final Value<String> surveyId;
+  final Value<String> path;
+  final Value<DateTime> createdAt;
+  const SurveyPhotosCompanion({
+    this.id = const Value.absent(),
+    this.surveyId = const Value.absent(),
+    this.path = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  SurveyPhotosCompanion.insert({
+    this.id = const Value.absent(),
+    required String surveyId,
+    required String path,
+    required DateTime createdAt,
+  }) : surveyId = Value(surveyId),
+       path = Value(path),
+       createdAt = Value(createdAt);
+  static Insertable<SurveyPhoto> custom({
+    Expression<int>? id,
+    Expression<String>? surveyId,
+    Expression<String>? path,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (surveyId != null) 'survey_id': surveyId,
+      if (path != null) 'path': path,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  SurveyPhotosCompanion copyWith({
+    Value<int>? id,
+    Value<String>? surveyId,
+    Value<String>? path,
+    Value<DateTime>? createdAt,
+  }) {
+    return SurveyPhotosCompanion(
+      id: id ?? this.id,
+      surveyId: surveyId ?? this.surveyId,
+      path: path ?? this.path,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (surveyId.present) {
+      map['survey_id'] = Variable<String>(surveyId.value);
+    }
+    if (path.present) {
+      map['path'] = Variable<String>(path.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('SurveyPhotosCompanion(')
+          ..write('id: $id, ')
+          ..write('surveyId: $surveyId, ')
+          ..write('path: $path, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $ProjectsTable projects = $ProjectsTable(this);
   late final $SurveysTable surveys = $SurveysTable(this);
+  late final $SurveyPhotosTable surveyPhotos = $SurveyPhotosTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
-  List<DatabaseSchemaEntity> get allSchemaEntities => [projects, surveys];
+  List<DatabaseSchemaEntity> get allSchemaEntities => [
+    projects,
+    surveys,
+    surveyPhotos,
+  ];
+  @override
+  StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
+    WritePropagation(
+      on: TableUpdateQuery.onTableName(
+        'surveys',
+        limitUpdateKind: UpdateKind.delete,
+      ),
+      result: [TableUpdate('survey_photos', kind: UpdateKind.delete)],
+    ),
+  ]);
 }
 
 typedef $$ProjectsTableCreateCompanionBuilder =
@@ -1057,6 +1373,29 @@ typedef $$SurveysTableUpdateCompanionBuilder =
       Value<int> rowid,
     });
 
+final class $$SurveysTableReferences
+    extends BaseReferences<_$AppDatabase, $SurveysTable, Survey> {
+  $$SurveysTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static MultiTypedResultKey<$SurveyPhotosTable, List<SurveyPhoto>>
+  _surveyPhotosRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.surveyPhotos,
+    aliasName: $_aliasNameGenerator(db.surveys.id, db.surveyPhotos.surveyId),
+  );
+
+  $$SurveyPhotosTableProcessedTableManager get surveyPhotosRefs {
+    final manager = $$SurveyPhotosTableTableManager(
+      $_db,
+      $_db.surveyPhotos,
+    ).filter((f) => f.surveyId.id.sqlEquals($_itemColumn<String>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(_surveyPhotosRefsTable($_db));
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+}
+
 class $$SurveysTableFilterComposer
     extends Composer<_$AppDatabase, $SurveysTable> {
   $$SurveysTableFilterComposer({
@@ -1105,6 +1444,31 @@ class $$SurveysTableFilterComposer
     column: $table.address,
     builder: (column) => ColumnFilters(column),
   );
+
+  Expression<bool> surveyPhotosRefs(
+    Expression<bool> Function($$SurveyPhotosTableFilterComposer f) f,
+  ) {
+    final $$SurveyPhotosTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.surveyPhotos,
+      getReferencedColumn: (t) => t.surveyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SurveyPhotosTableFilterComposer(
+            $db: $db,
+            $table: $db.surveyPhotos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$SurveysTableOrderingComposer
@@ -1189,6 +1553,31 @@ class $$SurveysTableAnnotationComposer
 
   GeneratedColumn<String> get address =>
       $composableBuilder(column: $table.address, builder: (column) => column);
+
+  Expression<T> surveyPhotosRefs<T extends Object>(
+    Expression<T> Function($$SurveyPhotosTableAnnotationComposer a) f,
+  ) {
+    final $$SurveyPhotosTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.surveyPhotos,
+      getReferencedColumn: (t) => t.surveyId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SurveyPhotosTableAnnotationComposer(
+            $db: $db,
+            $table: $db.surveyPhotos,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
 }
 
 class $$SurveysTableTableManager
@@ -1202,9 +1591,9 @@ class $$SurveysTableTableManager
           $$SurveysTableAnnotationComposer,
           $$SurveysTableCreateCompanionBuilder,
           $$SurveysTableUpdateCompanionBuilder,
-          (Survey, BaseReferences<_$AppDatabase, $SurveysTable, Survey>),
+          (Survey, $$SurveysTableReferences),
           Survey,
-          PrefetchHooks Function()
+          PrefetchHooks Function({bool surveyPhotosRefs})
         > {
   $$SurveysTableTableManager(_$AppDatabase db, $SurveysTable table)
     : super(
@@ -1262,9 +1651,42 @@ class $$SurveysTableTableManager
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0
-              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SurveysTableReferences(db, table, e),
+                ),
+              )
               .toList(),
-          prefetchHooksCallback: null,
+          prefetchHooksCallback: ({surveyPhotosRefs = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [if (surveyPhotosRefs) db.surveyPhotos],
+              addJoins: null,
+              getPrefetchedDataCallback: (items) async {
+                return [
+                  if (surveyPhotosRefs)
+                    await $_getPrefetchedData<
+                      Survey,
+                      $SurveysTable,
+                      SurveyPhoto
+                    >(
+                      currentTable: table,
+                      referencedTable: $$SurveysTableReferences
+                          ._surveyPhotosRefsTable(db),
+                      managerFromTypedResult: (p0) => $$SurveysTableReferences(
+                        db,
+                        table,
+                        p0,
+                      ).surveyPhotosRefs,
+                      referencedItemsForCurrentItem: (item, referencedItems) =>
+                          referencedItems.where((e) => e.surveyId == item.id),
+                      typedResults: items,
+                    ),
+                ];
+              },
+            );
+          },
         ),
       );
 }
@@ -1279,9 +1701,303 @@ typedef $$SurveysTableProcessedTableManager =
       $$SurveysTableAnnotationComposer,
       $$SurveysTableCreateCompanionBuilder,
       $$SurveysTableUpdateCompanionBuilder,
-      (Survey, BaseReferences<_$AppDatabase, $SurveysTable, Survey>),
+      (Survey, $$SurveysTableReferences),
       Survey,
-      PrefetchHooks Function()
+      PrefetchHooks Function({bool surveyPhotosRefs})
+    >;
+typedef $$SurveyPhotosTableCreateCompanionBuilder =
+    SurveyPhotosCompanion Function({
+      Value<int> id,
+      required String surveyId,
+      required String path,
+      required DateTime createdAt,
+    });
+typedef $$SurveyPhotosTableUpdateCompanionBuilder =
+    SurveyPhotosCompanion Function({
+      Value<int> id,
+      Value<String> surveyId,
+      Value<String> path,
+      Value<DateTime> createdAt,
+    });
+
+final class $$SurveyPhotosTableReferences
+    extends BaseReferences<_$AppDatabase, $SurveyPhotosTable, SurveyPhoto> {
+  $$SurveyPhotosTableReferences(super.$_db, super.$_table, super.$_typedResult);
+
+  static $SurveysTable _surveyIdTable(_$AppDatabase db) =>
+      db.surveys.createAlias(
+        $_aliasNameGenerator(db.surveyPhotos.surveyId, db.surveys.id),
+      );
+
+  $$SurveysTableProcessedTableManager get surveyId {
+    final $_column = $_itemColumn<String>('survey_id')!;
+
+    final manager = $$SurveysTableTableManager(
+      $_db,
+      $_db.surveys,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_surveyIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$SurveyPhotosTableFilterComposer
+    extends Composer<_$AppDatabase, $SurveyPhotosTable> {
+  $$SurveyPhotosTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get path => $composableBuilder(
+    column: $table.path,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$SurveysTableFilterComposer get surveyId {
+    final $$SurveysTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.surveyId,
+      referencedTable: $db.surveys,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SurveysTableFilterComposer(
+            $db: $db,
+            $table: $db.surveys,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SurveyPhotosTableOrderingComposer
+    extends Composer<_$AppDatabase, $SurveyPhotosTable> {
+  $$SurveyPhotosTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get path => $composableBuilder(
+    column: $table.path,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$SurveysTableOrderingComposer get surveyId {
+    final $$SurveysTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.surveyId,
+      referencedTable: $db.surveys,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SurveysTableOrderingComposer(
+            $db: $db,
+            $table: $db.surveys,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SurveyPhotosTableAnnotationComposer
+    extends Composer<_$AppDatabase, $SurveyPhotosTable> {
+  $$SurveyPhotosTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get path =>
+      $composableBuilder(column: $table.path, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$SurveysTableAnnotationComposer get surveyId {
+    final $$SurveysTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.surveyId,
+      referencedTable: $db.surveys,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$SurveysTableAnnotationComposer(
+            $db: $db,
+            $table: $db.surveys,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$SurveyPhotosTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $SurveyPhotosTable,
+          SurveyPhoto,
+          $$SurveyPhotosTableFilterComposer,
+          $$SurveyPhotosTableOrderingComposer,
+          $$SurveyPhotosTableAnnotationComposer,
+          $$SurveyPhotosTableCreateCompanionBuilder,
+          $$SurveyPhotosTableUpdateCompanionBuilder,
+          (SurveyPhoto, $$SurveyPhotosTableReferences),
+          SurveyPhoto,
+          PrefetchHooks Function({bool surveyId})
+        > {
+  $$SurveyPhotosTableTableManager(_$AppDatabase db, $SurveyPhotosTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$SurveyPhotosTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$SurveyPhotosTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$SurveyPhotosTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> surveyId = const Value.absent(),
+                Value<String> path = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => SurveyPhotosCompanion(
+                id: id,
+                surveyId: surveyId,
+                path: path,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String surveyId,
+                required String path,
+                required DateTime createdAt,
+              }) => SurveyPhotosCompanion.insert(
+                id: id,
+                surveyId: surveyId,
+                path: path,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable(table),
+                  $$SurveyPhotosTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({surveyId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (surveyId) {
+                      state =
+                          state.withJoin(
+                                currentTable: table,
+                                currentColumn: table.surveyId,
+                                referencedTable: $$SurveyPhotosTableReferences
+                                    ._surveyIdTable(db),
+                                referencedColumn: $$SurveyPhotosTableReferences
+                                    ._surveyIdTable(db)
+                                    .id,
+                              )
+                              as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$SurveyPhotosTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $SurveyPhotosTable,
+      SurveyPhoto,
+      $$SurveyPhotosTableFilterComposer,
+      $$SurveyPhotosTableOrderingComposer,
+      $$SurveyPhotosTableAnnotationComposer,
+      $$SurveyPhotosTableCreateCompanionBuilder,
+      $$SurveyPhotosTableUpdateCompanionBuilder,
+      (SurveyPhoto, $$SurveyPhotosTableReferences),
+      SurveyPhoto,
+      PrefetchHooks Function({bool surveyId})
     >;
 
 class $AppDatabaseManager {
@@ -1291,4 +2007,6 @@ class $AppDatabaseManager {
       $$ProjectsTableTableManager(_db, _db.projects);
   $$SurveysTableTableManager get surveys =>
       $$SurveysTableTableManager(_db, _db.surveys);
+  $$SurveyPhotosTableTableManager get surveyPhotos =>
+      $$SurveyPhotosTableTableManager(_db, _db.surveyPhotos);
 }

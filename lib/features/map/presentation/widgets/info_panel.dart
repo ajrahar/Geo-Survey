@@ -12,7 +12,9 @@ class InfoPanel extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final drawingState = ref.watch(drawingStateProvider);
 
-    if (!drawingState.isDrawing && drawingState.mode != DrawingMode.complete) {
+    if (!drawingState.isDrawing &&
+        drawingState.mode != DrawingMode.complete &&
+        drawingState.mode != DrawingMode.measure) {
       return Positioned(
         top: 16,
         left: 16,
@@ -72,7 +74,9 @@ class InfoPanel extends ConsumerWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Statistik Polygon',
+                    drawingState.mode == DrawingMode.measure
+                        ? 'Pengukuran Jarak'
+                        : 'Statistik Polygon',
                     style: Theme.of(context).textTheme.titleSmall?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.w600,
@@ -82,7 +86,7 @@ class InfoPanel extends ConsumerWidget {
               ),
               const SizedBox(height: 12),
 
-              // Vertices count
+              // Vertices count (Common)
               _StatRow(
                 icon: Icons.location_on,
                 label: 'Jumlah Titik',
@@ -91,8 +95,30 @@ class InfoPanel extends ConsumerWidget {
 
               const SizedBox(height: 8),
 
-              // Area
-              if (drawingState.vertices.length >= 3) ...[
+              // Measure Mode Stats
+              if (drawingState.mode == DrawingMode.measure) ...[
+                _StatRow(
+                  icon: Icons.straighten,
+                  label: 'Jarak Total',
+                  value: GeoCalculator.formatDistance(drawingState.perimeter),
+                ),
+
+                if (drawingState.vertices.length < 2)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      'Tap 2 titik untuk mengukur jarak',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white70,
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ),
+              ],
+
+              // Polygon Draw Mode Stats
+              if (drawingState.mode != DrawingMode.measure &&
+                  drawingState.vertices.length >= 3) ...[
                 _StatRow(
                   icon: Icons.crop_square,
                   label: 'Luas Area',
@@ -108,8 +134,9 @@ class InfoPanel extends ConsumerWidget {
                 ),
               ],
 
-              // Hint
-              if (drawingState.vertices.length < 3)
+              // Hint for Polygon Draw
+              if (drawingState.mode != DrawingMode.measure &&
+                  drawingState.vertices.length < 3)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),
                   child: Text(

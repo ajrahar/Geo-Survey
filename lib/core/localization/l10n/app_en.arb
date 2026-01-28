@@ -26,5 +26,15 @@
   "statistics": "Statistics",
   "pointCount": "Point Count",
   "areaSize": "Area Size",
-  "perimeter": "Perimeter"
+  "perimeter": "Perimeter",
+  "importSurvey": "Import KML/GeoJSON",
+  "importSuccess": "Import successful",
+  "importError": "Import failed: {error}",
+  "@importError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  }
 }

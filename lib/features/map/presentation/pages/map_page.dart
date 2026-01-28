@@ -11,6 +11,7 @@ import 'package:geosurvey/features/map/presentation/pages/tile_download_page.dar
 import 'package:geosurvey/features/map/presentation/widgets/polygon_layer_widget.dart';
 import 'package:geosurvey/features/map/presentation/widgets/drawing_toolbar.dart';
 import 'package:geosurvey/features/map/presentation/widgets/info_panel.dart';
+import 'package:geosurvey/features/map/presentation/widgets/layer_selector_widget.dart';
 
 class MapPage extends ConsumerStatefulWidget {
   const MapPage({super.key});
@@ -21,6 +22,7 @@ class MapPage extends ConsumerStatefulWidget {
 
 class _MapPageState extends ConsumerState<MapPage> {
   final MapController _mapController = MapController();
+  MapLayerType _currentLayer = MapLayerType.normal;
 
   @override
   void dispose() {
@@ -67,10 +69,13 @@ class _MapPageState extends ConsumerState<MapPage> {
             ),
             children: [
               // OpenStreetMap Tile Layer
+              // Tile Layer
               TileLayer(
-                urlTemplate: MapConstants.osmTileUrl,
+                urlTemplate: _getTileUrl(_currentLayer),
                 userAgentPackageName: 'com.example.geosurvey',
-                tileProvider: TileCacheManager.getTileProvider(),
+                tileProvider: _currentLayer == MapLayerType.normal
+                    ? TileCacheManager.getTileProvider()
+                    : null, // Only cache normal OSM for now
               ),
 
               // Polygon and Markers Layer
@@ -130,18 +135,66 @@ class _MapPageState extends ConsumerState<MapPage> {
           // Info Panel
           const InfoPanel(),
 
+          // Layer Selector
+          if (!drawingState.isDrawing &&
+              drawingState.mode != DrawingMode.complete)
+            Positioned(
+              top: 16,
+              right: 16,
+              child: LayerSelectorWidget(
+                currentLayer: _currentLayer,
+                onLayerChanged: (layer) {
+                  setState(() {
+                    _currentLayer = layer;
+                  });
+                },
+              ),
+            ),
+
           // Drawing Toolbar
           DrawingToolbar(onSave: () => _showSaveDialog()),
         ],
       ),
       floatingActionButton:
           !drawingState.isDrawing && drawingState.mode != DrawingMode.complete
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                ref.read(drawingStateProvider.notifier).startDrawing();
-              },
-              icon: const Icon(Icons.edit_location_alt),
-              label: const Text('Mulai Gambar'),
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                FloatingActionButton.extended(
+                  heroTag: 'measure',
+                  onPressed: () {
+                    ref.read(drawingStateProvider.notifier).startMeasurement();
+                  },
+                  backgroundColor: AppColors.surface,
+                  foregroundColor: AppColors.primary,
+                  icon: const Icon(Icons.straighten),
+                  label: const Text('Ukur Jarak'),
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton.extended(
+                  heroTag: 'gps_track',
+                  onPressed: () {
+                    ref.read(drawingStateProvider.notifier).startGpsTracking();
+                    TopNotification.showInfo(
+                      context,
+                      'Berjalanlah untuk merekam area',
+                    );
+                  },
+                  backgroundColor: AppColors.surface,
+                  foregroundColor: AppColors.primary,
+                  icon: const Icon(Icons.directions_walk),
+                  label: const Text('Rekam GPS'),
+                ),
+                const SizedBox(height: 16),
+                FloatingActionButton.extended(
+                  heroTag: 'draw',
+                  onPressed: () {
+                    ref.read(drawingStateProvider.notifier).startDrawing();
+                  },
+                  icon: const Icon(Icons.edit_location_alt),
+                  label: const Text('Mulai Gambar'),
+                ),
+              ],
             )
           : null,
     );
@@ -265,6 +318,19 @@ class _MapPageState extends ConsumerState<MapPage> {
         ],
       ),
     );
+  }
+
+  String _getTileUrl(MapLayerType layer) {
+    switch (layer) {
+      case MapLayerType.normal:
+        return MapConstants.osmTileUrl;
+      case MapLayerType.satellite:
+        // Esri World Imagery (free to use with attribution)
+        return 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}';
+      case MapLayerType.terrain:
+        // OpenTopoMap
+        return 'https://tile.opentopomap.org/{z}/{x}/{y}.png';
+    }
   }
 }
 

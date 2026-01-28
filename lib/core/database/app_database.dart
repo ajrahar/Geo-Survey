@@ -46,13 +46,22 @@ class Surveys extends Table {
   Set<Column> get primaryKey => {id};
 }
 
+/// Photos attached to a survey
+class SurveyPhotos extends Table {
+  IntColumn get id => integer().autoIncrement()();
+  TextColumn get surveyId =>
+      text().references(Surveys, #id, onDelete: KeyAction.cascade)();
+  TextColumn get path => text()();
+  DateTimeColumn get createdAt => dateTime()();
+}
+
 /// Drift database for GeoSurvey Pro
-@DriftDatabase(tables: [Projects, Surveys])
+@DriftDatabase(tables: [Projects, Surveys, SurveyPhotos])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -60,6 +69,10 @@ class AppDatabase extends _$AppDatabase {
       if (from < 2) {
         // Add address column to surveys table
         await migrator.addColumn(surveys, surveys.address);
+      }
+      if (from < 3) {
+        // Add survey_photos table
+        await migrator.createTable(surveyPhotos);
       }
     },
   );
@@ -107,6 +120,16 @@ class AppDatabase extends _$AppDatabase {
     final result = await query.getSingle();
     return result.read(count) ?? 0;
   }
+
+  // Survey Photos CRUD
+  Future<List<SurveyPhoto>> getPhotosBySurveyId(String surveyId) =>
+      (select(surveyPhotos)..where((p) => p.surveyId.equals(surveyId))).get();
+
+  Future<int> insertSurveyPhoto(SurveyPhotosCompanion photo) =>
+      into(surveyPhotos).insert(photo);
+
+  Future<int> deleteSurveyPhoto(int id) =>
+      (delete(surveyPhotos)..where((p) => p.id.equals(id))).go();
 }
 
 /// Open database connection
