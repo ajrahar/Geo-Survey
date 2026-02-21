@@ -85,7 +85,10 @@ class SurveyRepository {
     try {
       final List<dynamic> points = jsonDecode(geometryJson);
       return points
-          .map((p) => LatLng(p['lat'] as double, p['lng'] as double))
+          .map((p) => LatLng(
+                (p['lat'] as num).toDouble(),
+                (p['lng'] as num).toDouble(),
+              ))
           .toList();
     } catch (e) {
       return [];

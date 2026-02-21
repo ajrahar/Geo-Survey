@@ -23,7 +23,10 @@ class GeoImportService {
 
       if (result == null || result.files.isEmpty) return null;
 
-      final file = File(result.files.single.path!);
+      final path = result.files.single.path;
+      if (path == null || path.isEmpty) return null;
+
+      final file = File(path);
       final content = await file.readAsString();
       final extension = result.files.single.extension?.toLowerCase();
       final filename = result.files.single.name;
@@ -48,7 +51,7 @@ class GeoImportService {
       // Look for FeatureCollection or Feature
       List<dynamic> features = [];
       if (data['type'] == 'FeatureCollection') {
-        features = data['features'];
+        features = data['features'] is List ? data['features'] as List : [];
       } else if (data['type'] == 'Feature') {
         features = [data];
       }

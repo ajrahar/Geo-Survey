@@ -724,18 +724,13 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
       final filename =
           'survey_${survey.name.replaceAll(RegExp(r'[^\w\s-]'), '').replaceAll(' ', '_')}_${DateTime.now().millisecondsSinceEpoch}.png';
 
-      // Save as binary
-      final path = await FileExporter.saveToFile(
-        content: String.fromCharCodes(imageBytes),
+      final path = await FileExporter.saveBytesToFile(
+        bytes: imageBytes,
         filename: filename,
       );
 
-      // Write bytes
-      final file = await File(path).writeAsBytes(imageBytes);
-
-      // Share
       await FileExporter.shareFile(
-        filePath: file.path,
+        filePath: path,
         filename: filename,
         text: 'Survey Map: ${survey.name}',
       );
@@ -775,18 +770,13 @@ class _SurveyDetailPageState extends ConsumerState<SurveyDetailPage> {
       final filename =
           'survey_${survey.name.replaceAll(RegExp(r'[^\w\s-]'), '').replaceAll(' ', '_')}_${DateTime.now().millisecondsSinceEpoch}.pdf';
 
-      // Save as binary
-      final path = await FileExporter.saveToFile(
-        content: '',
+      final path = await FileExporter.saveBytesToFile(
+        bytes: pdfBytes,
         filename: filename,
       );
 
-      // Write bytes
-      final file = await File(path).writeAsBytes(pdfBytes);
-
-      // Share
       await FileExporter.shareFile(
-        filePath: file.path,
+        filePath: path,
         filename: filename,
         text: 'Laporan Survey: ${survey.name}',
       );

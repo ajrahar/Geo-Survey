@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:geosurvey/core/database/app_database.dart';
 import 'package:geosurvey/core/utils/file_exporter.dart';
@@ -286,8 +285,8 @@ class PdfExporter {
     final filename =
         'survey_${survey.name.replaceAll(RegExp(r'[^\w\s-]'), '').replaceAll(' ', '_')}_${DateTime.now().millisecondsSinceEpoch}.pdf';
 
-    await FileExporter.saveAndShare(
-      content: String.fromCharCodes(pdfBytes),
+    await FileExporter.saveBytesAndShare(
+      bytes: pdfBytes,
       filename: filename,
       shareText: 'Laporan Survey: ${survey.name}',
     );
@@ -308,12 +307,9 @@ class PdfExporter {
     final filename =
         'survey_${survey.name.replaceAll(RegExp(r'[^\w\s-]'), '').replaceAll(' ', '_')}_${DateTime.now().millisecondsSinceEpoch}.pdf';
 
-    // Save as binary file
-    final file = File(
-      await FileExporter.saveToFile(content: '', filename: filename),
+    return await FileExporter.saveBytesToFile(
+      bytes: pdfBytes,
+      filename: filename,
     );
-
-    await file.writeAsBytes(pdfBytes);
-    return file.path;
   }
 }

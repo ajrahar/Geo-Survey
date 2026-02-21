@@ -1,9 +1,26 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 /// File export utilities for saving and sharing files
 class FileExporter {
+  /// Save binary content to file and return file path
+  static Future<String> saveBytesToFile({
+    required Uint8List bytes,
+    required String filename,
+  }) async {
+    try {
+      final directory = await getTemporaryDirectory();
+      final filePath = '${directory.path}/$filename';
+      final file = File(filePath);
+      await file.writeAsBytes(bytes);
+      return filePath;
+    } catch (e) {
+      throw Exception('Failed to save file: $e');
+    }
+  }
+
   /// Save content to file and return file path
   static Future<String> saveToFile({
     required String content,
@@ -49,6 +66,16 @@ class FileExporter {
     String? shareText,
   }) async {
     final filePath = await saveToFile(content: content, filename: filename);
+    await shareFile(filePath: filePath, filename: filename, text: shareText);
+  }
+
+  /// Save binary bytes and share in one operation
+  static Future<void> saveBytesAndShare({
+    required Uint8List bytes,
+    required String filename,
+    String? shareText,
+  }) async {
+    final filePath = await saveBytesToFile(bytes: bytes, filename: filename);
     await shareFile(filePath: filePath, filename: filename, text: shareText);
   }
 }
